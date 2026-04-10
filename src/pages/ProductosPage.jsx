@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../lib/axios';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const ProductosPage = () => {
+  const { user } = useAuth();
   const [productos, setProductos] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -29,6 +32,39 @@ const ProductosPage = () => {
     const tid = setTimeout(fetchProductos, 300);
     return () => clearTimeout(tid);
   }, [search, page]);
+
+  const handleDelete = (id, nombre) => {
+    toast((t) => (
+      <div className="flex flex-col gap-2 p-1">
+        <p className="text-sm font-semibold text-gray-800">¿Estás seguro?</p>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 font-medium cursor-pointer"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              const tid = toast.loading('Eliminando...');
+              try {
+                await api.delete(`/api/products/${id}`);
+                setProductos(prev => prev.filter(p => p.id !== id));
+                setTotal(prev => prev - 1);
+                toast.success('Producto eliminado', { id: tid });
+              } catch (err) {
+                toast.error(err.response?.data?.error || 'Error al eliminar', { id: tid });
+              }
+            }}
+            className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 font-bold cursor-pointer"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    ), { duration: 6000, position: 'top-center' });
+  };
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
@@ -69,7 +105,18 @@ const ProductosPage = () => {
                     </span>
                   </td>
                   <td className="p-3 text-center">
-                    <Link to={`/productos/${p.id}`} className="text-[var(--color-accent)] font-semibold hover:underline">Ver Historial</Link>
+                    <div className="flex items-center justify-center gap-3">
+                      <Link to={`/productos/${p.id}`} className="text-[var(--color-accent)] font-semibold hover:underline">Ver Historial</Link>
+                      {user?.role === 'admin' && (
+                        <button
+                          onClick={() => handleDelete(p.id, p.nombre)}
+                          className="text-red-500 hover:text-red-700 font-semibold text-xs cursor-pointer"
+                          title="Eliminar producto"
+                        >
+                          Eliminar
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))

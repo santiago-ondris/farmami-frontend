@@ -33,7 +33,12 @@ const DetalleProductoPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 sm:col-span-2">
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 sm:col-span-2 relative overflow-hidden">
+          {producto.deleted_at && (
+            <div className="absolute top-0 right-0 bg-red-100 text-red-700 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-bl-lg">
+              Producto Archivado / Eliminado
+            </div>
+          )}
           <h2 className="text-2xl font-bold text-gray-800">{producto.nombre}</h2>
           <p className="text-gray-500 mt-1">Laboratorio: {producto.laboratorio}</p>
         </div>
