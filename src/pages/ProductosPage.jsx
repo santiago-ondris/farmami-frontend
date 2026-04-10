@@ -33,7 +33,7 @@ const ProductosPage = () => {
   return (
     <div className="space-y-6 font-['var(--font-body)']">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Catálogo de Productos</h1>
+        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Stock de Productos</h1>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">

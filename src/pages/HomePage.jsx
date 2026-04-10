@@ -36,7 +36,7 @@ const HomePage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric Cards */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center justify-center">
-          <p className="text-sm font-medium text-gray-500 mb-1">Catálogo Activo</p>
+          <p className="text-sm font-medium text-gray-500 mb-1">Stock Activo</p>
           <span className="text-4xl font-bold text-[var(--color-primary)] font-['var(--font-heading)']">{totalProductos}</span>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center justify-center">
