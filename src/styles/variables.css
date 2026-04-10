@@ -1,0 +1,9 @@
+:root {
+  --color-primary: #2D3748;
+  --color-action: #D85A30;
+  --color-accent: #38B2AC;
+  --color-bg: #F7F8FA;
+  --color-text: #1A202C;
+  --font-heading: 'Fraunces', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
