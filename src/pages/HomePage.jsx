@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStock } from '../hooks/useStock';
 import api from '../lib/axios';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 const HomePage = () => {
   const { stockData, loading, error } = useStock();
   const [pendingTotal, setPendingTotal] = useState(0);
+  const [pageVencimiento, setPageVencimiento] = useState(1);
+  const limitVencimiento = 15;
 
   useEffect(() => {
     const fetchPendingEgresos = async () => {
@@ -23,7 +25,9 @@ const HomePage = () => {
   const totalProductos = stockData.length;
   const totalUnidades = stockData.reduce((acc, item) => acc + item.stock, 0);
   const stockNegativos = stockData.filter(i => i.stock_negativo);
+
   const productosPorVencer = stockData.filter(i => i.vence_pronto);
+  const paginatedVencimiento = productosPorVencer.slice((pageVencimiento - 1) * limitVencimiento, pageVencimiento * limitVencimiento);
 
   return (
     <div className="space-y-8 font-['var(--font-body)']">
@@ -50,7 +54,7 @@ const HomePage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+
         {/* Alertas Vencimiento */}
         <div className="bg-white border text-amber-900 border-amber-200 rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold font-['var(--font-heading)'] mb-4 text-amber-700 flex items-center gap-2">
@@ -59,44 +63,32 @@ const HomePage = () => {
           {productosPorVencer.length === 0 ? (
             <p className="text-sm opacity-80">El inventario está sano. Ningún lote próximo a vencer.</p>
           ) : (
-            <ul className="space-y-3">
-              {productosPorVencer.map(p => (
-                <li key={p.id} className="flex justify-between items-center pb-2 border-b border-amber-100 last:border-0 last:pb-0">
-                  <div className="font-medium text-sm">
-                    {p.nombre} <span className="opacity-70 font-normal">({p.laboratorio})</span>
+            <div className="space-y-4">
+              <ul className="space-y-3">
+                {paginatedVencimiento.map(p => (
+                  <li key={p.id} className="flex justify-between items-center pb-2 border-b border-amber-100 last:border-0 last:pb-0">
+                    <div className="font-medium text-sm">
+                      {p.nombre} <span className="opacity-70 font-normal">({p.laboratorio})</span>
+                    </div>
+                    <Link to={`/productos/${p.id}`} className="text-xs font-semibold bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded transition-colors text-amber-800">
+                      Ver Lotes
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              {productosPorVencer.length > limitVencimiento && (
+                <div className="flex justify-between items-center text-sm text-amber-800 mt-4 border-t border-amber-200 pt-3">
+                  <div className="font-medium">Mostrando {paginatedVencimiento.length} de {productosPorVencer.length}</div>
+                  <div className="flex gap-2">
+                    <button disabled={pageVencimiento === 1} onClick={() => setPageVencimiento(p => p - 1)} className="px-3 py-1 border border-amber-300 rounded font-semibold disabled:opacity-50 bg-white hover:bg-amber-50 cursor-pointer">Anterior</button>
+                    <button disabled={pageVencimiento * limitVencimiento >= productosPorVencer.length} onClick={() => setPageVencimiento(p => p + 1)} className="px-3 py-1 border border-amber-300 rounded font-semibold disabled:opacity-50 bg-white hover:bg-amber-50 cursor-pointer">Siguiente</button>
                   </div>
-                  <Link to={`/productos/${p.id}`} className="text-xs font-semibold bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded transition-colors text-amber-800">
-                    Ver Lotes
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                </div>
+              )}
+            </div>
           )}
         </div>
-
-        {/* Stock Negativo */}
-        {stockNegativos.length > 0 && (
-          <div className="bg-white border text-red-900 border-red-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-bold font-['var(--font-heading)'] mb-4 text-[var(--color-action)] flex items-center gap-2">
-              🛑 Stock Negativo Detectado
-            </h2>
-            <ul className="space-y-3">
-              {stockNegativos.map(p => (
-                <li key={p.id} className="flex justify-between items-center pb-2 border-b border-red-100 last:border-0 last:pb-0">
-                  <div className="font-medium text-sm">
-                    {p.nombre} <span className="opacity-70 font-normal">({p.laboratorio})</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[var(--color-action)] font-bold text-lg">{p.stock}</span>
-                    <Link to={`/productos/${p.id}`} className="text-xs font-semibold bg-red-100 hover:bg-red-200 px-3 py-1 rounded transition-colors text-red-800">
-                      Revisar
-                    </Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
 
     </div>

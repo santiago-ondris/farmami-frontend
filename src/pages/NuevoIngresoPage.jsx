@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../lib/axios';
+import { handleFormInvalid } from '../lib/validation';
 import ProductAutocomplete from '../components/ProductAutocomplete';
 
 const NuevoIngresoPage = () => {
@@ -28,19 +30,21 @@ const NuevoIngresoPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.product_id) {
-      alert("Por favor, seleccione un producto.");
+      toast.error("Por favor, seleccione un producto.");
       return;
     }
     setLoading(true);
     try {
       const payload = {
         ...formData,
+        fecha_ingreso: new Date(formData.fecha_ingreso).toISOString(),
+        vencimiento: new Date(formData.vencimiento).toISOString(),
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.post('/api/ingresos', payload);
       navigate('/ingresos');
     } catch (err) {
-      alert(err.response?.data?.error || "Error al crear ingreso");
+      toast.error(err.response?.data?.error || "Error al crear ingreso");
     } finally {
       setLoading(false);
     }
@@ -53,13 +57,13 @@ const NuevoIngresoPage = () => {
         <Link to="/ingresos" className="text-gray-500 hover:underline">Volver a lista</Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
+      <form onSubmit={handleSubmit} onInvalid={handleFormInvalid} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Producto *</label>
-            <ProductAutocomplete 
+            <ProductAutocomplete
               value={formData.product_id}
-              onChange={(id) => setFormData({...formData, product_id: id})}
+              onChange={(id) => setFormData({ ...formData, product_id: id })}
             />
           </div>
 

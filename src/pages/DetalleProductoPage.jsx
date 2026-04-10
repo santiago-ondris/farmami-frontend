@@ -6,17 +6,21 @@ const DetalleProductoPage = () => {
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [order, setOrder] = useState('desc');
+  const limit = 50;
 
   useEffect(() => {
     const fetchProduct = async () => {
+      setLoading(true);
       try {
-        const { data } = await api.get(`/api/products/${id}`);
+        const { data } = await api.get(`/api/products/${id}?page=${page}&limit=${limit}&order=${order}`);
         setProducto(data);
       } catch (e) { }
       setLoading(false);
     };
     fetchProduct();
-  }, [id]);
+  }, [id, page, order]);
 
   if (loading) return <div>Cargando...</div>;
   if (!producto) return <div className="text-red-500">Producto no encontrado</div>;
@@ -40,7 +44,17 @@ const DetalleProductoPage = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 bg-gray-50 border-b border-gray-100 font-bold text-gray-700">Línea de Tiempo Operativa</div>
+        <div className="p-4 bg-gray-50 border-b border-gray-100 font-bold text-gray-700 flex justify-between items-center">
+          <span>Línea de Tiempo Operativa</span>
+          <select
+            className="text-sm border rounded p-1 font-normal outline-none focus:border-[var(--color-primary)] cursor-pointer"
+            value={order}
+            onChange={e => { setOrder(e.target.value); setPage(1); }}
+          >
+            <option value="desc">Más nuevos primero</option>
+            <option value="asc">Más antiguos primero</option>
+          </select>
+        </div>
         <div className="p-0">
           {producto.history && producto.history.length === 0 ? (
             <div className="p-6 text-center text-gray-500">No hay movimientos registrados para este producto.</div>
@@ -74,6 +88,17 @@ const DetalleProductoPage = () => {
           )}
         </div>
       </div>
+
+      {producto.historyTotal > 0 && (
+        <div className="flex justify-between items-center text-sm text-gray-500 mt-4">
+          <div>Mostrando {producto.history.length} de {producto.historyTotal} movimientos</div>
+          <div className="flex gap-2">
+            <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-white">Anterior</button>
+            <button disabled={producto.history.length < limit} onClick={() => setPage(p => p + 1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-white">Siguiente</button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

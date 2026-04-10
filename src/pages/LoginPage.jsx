@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { handleFormInvalid } from '../lib/validation';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -35,11 +36,11 @@ const LoginPage = () => {
           Inventario Farmacéutico
         </h1>
         {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-4 font-['var(--font-body)']">
+        <form onSubmit={handleSubmit} onInvalid={handleFormInvalid} className="space-y-4 font-['var(--font-body)']">
           <div>
             <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Email</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               required
               className="w-full p-2 border border-gray-300 rounded focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none"
               value={email}
@@ -48,16 +49,16 @@ const LoginPage = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Contraseña</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               required
               className="w-full p-2 border border-gray-300 rounded focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className="w-full bg-[var(--color-primary)] text-white py-2.5 rounded font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-4 cursor-pointer"
           >

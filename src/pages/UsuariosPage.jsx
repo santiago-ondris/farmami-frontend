@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import api from '../lib/axios';
+import { handleFormInvalid } from '../lib/validation';
 
 const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: 'operador'
+    role: 'user'
   });
   const [saving, setSaving] = useState(false);
 
@@ -19,7 +21,7 @@ const UsuariosPage = () => {
       const { data } = await api.get('/api/users');
       setUsuarios(data);
     } catch (e) {
-      alert("Error al obtener usuarios");
+      toast.error("Error al obtener usuarios");
     } finally {
       setLoading(false);
     }
@@ -39,10 +41,12 @@ const UsuariosPage = () => {
     try {
       await api.post('/api/users', formData);
       setShowModal(false);
-      setFormData({ email: '', password: '', role: 'operador' });
+      setFormData({ email: '', password: '', role: 'user' });
       fetchUsuarios();
     } catch (err) {
-      alert(err.response?.data?.error || "Error al crear usuario");
+      const errorData = err.response?.data?.error;
+      const errorMsg = Array.isArray(errorData) ? errorData[0].message : errorData;
+      toast.error(errorMsg || "Error al crear usuario");
     } finally {
       setSaving(false);
     }
@@ -54,7 +58,7 @@ const UsuariosPage = () => {
       await api.delete(`/api/users/${id}`);
       fetchUsuarios();
     } catch (err) {
-      alert("Error al desactivar usuario");
+      toast.error("Error al desactivar usuario");
     }
   };
 
@@ -108,7 +112,7 @@ const UsuariosPage = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white p-6 rounded-lg w-full max-w-md">
             <h3 className="text-xl font-bold font-['var(--font-heading)'] mb-4 text-[var(--color-primary)]">Nuevo Usuario</h3>
-            <form onSubmit={handleCreate} className="space-y-4">
+            <form onSubmit={handleCreate} onInvalid={handleFormInvalid} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Email</label>
                 <input required type="email" name="email" className="w-full p-2 border border-gray-300 rounded outline-none focus:border-[var(--color-primary)]" value={formData.email} onChange={handleChange} />
@@ -116,11 +120,12 @@ const UsuariosPage = () => {
               <div>
                 <label className="block text-sm font-medium mb-1">Contraseña</label>
                 <input required type="password" name="password" minLength="6" className="w-full p-2 border border-gray-300 rounded outline-none focus:border-[var(--color-primary)]" value={formData.password} onChange={handleChange} />
+                <p className="text-xs text-gray-400 mt-1">Debe ser de al menos 6 caracteres.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Rol</label>
                 <select name="role" className="w-full p-2 border border-gray-300 rounded outline-none focus:border-[var(--color-primary)]" value={formData.role} onChange={handleChange}>
-                  <option value="operador">Operador (Estándar)</option>
+                  <option value="user">Operador (Estándar)</option>
                   <option value="admin">Administrador (Acceso Total)</option>
                 </select>
               </div>

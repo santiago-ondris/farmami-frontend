@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../lib/axios';
+import { handleFormInvalid } from '../lib/validation';
 
 const DetalleEgresoPage = () => {
   const { id } = useParams();
@@ -47,6 +48,8 @@ const DetalleEgresoPage = () => {
     try {
       const payload = {
         ...formData,
+        fecha_entrega: new Date(formData.fecha_entrega).toISOString(),
+        vencimiento: new Date(formData.vencimiento).toISOString(),
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.patch(`/api/egresos/${id}`, payload);
@@ -88,13 +91,13 @@ const DetalleEgresoPage = () => {
             <p className="text-sm text-gray-500">Laboratorio: {egreso.product?.laboratorio}</p>
           </div>
           <div className="text-right">
-             <span className="block text-xs text-gray-500 font-bold uppercase mb-1">Estado Remito</span>
-             <span className={`px-3 py-1 text-xs font-bold rounded-full border 
-                ${egreso.estado_remito==='Pendiente' ? 'bg-amber-100 text-amber-800 border-amber-200' : 
-                  egreso.estado_remito==='Entregado' ? 'bg-green-100 text-green-800 border-green-200' : 
+            <span className="block text-xs text-gray-500 font-bold uppercase mb-1">Estado Remito</span>
+            <span className={`px-3 py-1 text-xs font-bold rounded-full border 
+                ${egreso.estado_remito === 'Pendiente' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                egreso.estado_remito === 'Entregado' ? 'bg-green-100 text-green-800 border-green-200' :
                   'bg-gray-100 text-gray-800 border-gray-200'}`}>
-                {egreso.estado_remito}
-             </span>
+              {egreso.estado_remito}
+            </span>
           </div>
         </div>
 
@@ -108,15 +111,15 @@ const DetalleEgresoPage = () => {
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Vencimiento Lote</span>{new Date(egreso.vencimiento).toLocaleDateString('es-AR')}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Serial</span>{egreso.serial || '-'}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Orden de Compra</span>{egreso.orden_compra || '-'}</div>
-            
+
             <div className="md:col-span-2 pt-6 flex gap-3 border-t mt-4">
               <button onClick={() => setIsEditing(true)} className="px-6 py-2 bg-[var(--color-primary)] text-white rounded font-semibold cursor-pointer">Editar Información</button>
               <button onClick={handleDelete} className="px-6 py-2 border border-red-200 text-[var(--color-action)] hover:bg-red-50 rounded font-semibold cursor-pointer">Eliminar Egreso</button>
             </div>
           </div>
         ) : (
-          <form onSubmit={handleUpdate} className="space-y-4">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleUpdate} onInvalid={handleFormInvalid} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Fecha Entrega</label>
                 <input required type="date" name="fecha_entrega" value={formData.fecha_entrega} onChange={handleChange} className="w-full p-2 border rounded" />

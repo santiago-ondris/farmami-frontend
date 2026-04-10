@@ -4,23 +4,31 @@ import api from '../lib/axios';
 
 const ProductosPage = () => {
   const [productos, setProductos] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const limit = 50;
 
   useEffect(() => {
     const fetchProductos = async () => {
       setLoading(true);
       try {
-        const url = search ? `/api/products?search=${encodeURIComponent(search)}` : '/api/products';
-        const { data } = await api.get(url);
-        setProductos(data);
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        params.append('page', page);
+        params.append('limit', limit);
+
+        const { data } = await api.get(`/api/products?${params.toString()}`);
+        setProductos(data.data);
+        setTotal(data.total);
       } catch (err) { }
       setLoading(false);
     };
 
     const tid = setTimeout(fetchProductos, 300);
     return () => clearTimeout(tid);
-  }, [search]);
+  }, [search, page]);
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
@@ -31,7 +39,7 @@ const ProductosPage = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">
         <div className="flex-1 max-w-md">
           <label className="block text-xs font-medium text-gray-500 mb-1">Buscar Producto o Laboratorio</label>
-          <input type="text" className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]" value={search} onChange={e => setSearch(e.target.value)} />
+          <input type="text" className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
         </div>
       </div>
 
@@ -56,9 +64,9 @@ const ProductosPage = () => {
                   <td className="p-3 font-semibold text-[var(--color-primary)]">{p.nombre}</td>
                   <td className="p-3">{p.laboratorio}</td>
                   <td className="p-3 text-right">
-                     <span className={`font-bold text-lg ${p.stock < 0 ? 'text-red-600' : 'text-gray-800'}`}>
-                       {p.stock}
-                     </span>
+                    <span className={`font-bold text-lg ${p.stock < 0 ? 'text-red-600' : 'text-gray-800'}`}>
+                      {p.stock}
+                    </span>
                   </td>
                   <td className="p-3 text-center">
                     <Link to={`/productos/${p.id}`} className="text-[var(--color-accent)] font-semibold hover:underline">Ver Historial</Link>
@@ -69,6 +77,15 @@ const ProductosPage = () => {
           </tbody>
         </table>
       </div>
+
+      <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
+        <div>Mostrando {productos.length} de {total} registros</div>
+        <div className="flex gap-2">
+          <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Anterior</button>
+          <button disabled={productos.length < limit} onClick={() => setPage(p => p + 1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Siguiente</button>
+        </div>
+      </div>
+
     </div>
   );
 };

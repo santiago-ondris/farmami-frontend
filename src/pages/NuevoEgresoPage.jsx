@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../lib/axios';
+import { handleFormInvalid } from '../lib/validation';
 import ProductAutocomplete from '../components/ProductAutocomplete';
 
 const NuevoEgresoPage = () => {
@@ -20,7 +21,7 @@ const NuevoEgresoPage = () => {
 
   const [loteWarning, setLoteWarning] = useState(false);
   const [stockInfo, setStockInfo] = useState(null);
-  
+
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockResultante, setStockResultante] = useState(0);
 
@@ -36,7 +37,7 @@ const NuevoEgresoPage = () => {
           const { data } = await api.get(`/api/ingresos?search=${formData.lote}`);
           const exists = data.data.some(i => i.product_id === formData.product_id && i.lote === formData.lote);
           setLoteWarning(!exists);
-        } catch(e) { }
+        } catch (e) { }
       } else {
         setLoteWarning(false);
       }
@@ -51,7 +52,7 @@ const NuevoEgresoPage = () => {
         try {
           const { data } = await api.get(`/api/stock/${formData.product_id}`);
           setStockInfo(data);
-        } catch(e){}
+        } catch (e) { }
       } else {
         setStockInfo(null);
       }
@@ -65,11 +66,13 @@ const NuevoEgresoPage = () => {
       alert("Seleccione un producto.");
       return;
     }
-    
+
     setLoading(true);
     try {
       const payload = {
         ...formData,
+        fecha_entrega: new Date(formData.fecha_entrega).toISOString(),
+        vencimiento: new Date(formData.vencimiento).toISOString(),
         cantidad: parseInt(formData.cantidad, 10),
         confirm_negative: confirmNegative
       };
@@ -94,8 +97,8 @@ const NuevoEgresoPage = () => {
         <Link to="/egresos" className="text-gray-500 hover:underline">Volver a lista</Link>
       </div>
 
-      <form onSubmit={(e) => handleSubmit(e, false)} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
-        
+      <form onSubmit={(e) => handleSubmit(e, false)} onInvalid={handleFormInvalid} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
+
         {loteWarning && (
           <div className="p-3 bg-amber-50 text-amber-800 border border-amber-200 rounded text-sm mb-4 font-medium">
             ⚠️ Este lote no está registrado en ningún ingreso previo de este producto. Podría ser un error de tipeo.
@@ -111,9 +114,9 @@ const NuevoEgresoPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Producto *</label>
-            <ProductAutocomplete 
+            <ProductAutocomplete
               value={formData.product_id}
-              onChange={(id) => setFormData({...formData, product_id: id})}
+              onChange={(id) => setFormData({ ...formData, product_id: id })}
             />
             {stockInfo && <div className="text-xs mt-1 font-semibold text-gray-500">Stock actual: {stockInfo.stock}</div>}
           </div>
@@ -180,19 +183,19 @@ const NuevoEgresoPage = () => {
               Este egreso dejará el stock en negativo <strong className="text-red-600 font-bold ml-1">({stockResultante})</strong>. <br />¿Deseas continuar de todos modos?
             </p>
             <div className="space-y-3">
-              <button 
+              <button
                 onClick={() => { setShowStockModal(false); handleSubmit(null, true); }}
                 className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded font-bold transition-colors cursor-pointer"
               >
                 Continuar de todos modos
               </button>
-              <Link 
+              <Link
                 to={`/productos/${formData.product_id}`}
                 className="block w-full py-3 border border-gray-300 rounded font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Ver historial de este artículo
               </Link>
-              <button 
+              <button
                 onClick={() => setShowStockModal(false)}
                 className="w-full py-2 text-gray-500 font-semibold hover:underline cursor-pointer"
               >

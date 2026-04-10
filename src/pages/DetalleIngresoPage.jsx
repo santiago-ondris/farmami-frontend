@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../lib/axios';
+import { handleFormInvalid } from '../lib/validation';
 
 const DetalleIngresoPage = () => {
   const { id } = useParams();
@@ -49,6 +50,8 @@ const DetalleIngresoPage = () => {
     try {
       const payload = {
         ...formData,
+        fecha_ingreso: new Date(formData.fecha_ingreso).toISOString(),
+        vencimiento: new Date(formData.vencimiento).toISOString(),
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.patch(`/api/ingresos/${id}`, payload);
@@ -98,19 +101,19 @@ const DetalleIngresoPage = () => {
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Proveedor</span>{ingreso.proveedor}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Cantidad</span><span className="font-bold text-[var(--color-primary)] text-lg">{ingreso.cantidad}</span></div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Cadena Frío</span>{ingreso.cadena_frio ? 'Sí ❄️' : 'No'}</div>
-            
+
             {ingreso.observaciones && (
               <div className="md:col-span-2"><span className="block text-xs text-gray-500 font-bold uppercase">Observaciones</span><p className="whitespace-pre-wrap mt-1">{ingreso.observaciones}</p></div>
             )}
-            
+
             <div className="md:col-span-2 pt-6 flex gap-3 border-t mt-4">
               <button onClick={() => setIsEditing(true)} className="px-6 py-2 bg-[var(--color-primary)] text-white rounded font-semibold cursor-pointer">Editar Información</button>
               <button onClick={handleDelete} className="px-6 py-2 border border-red-200 text-[var(--color-action)] hover:bg-red-50 rounded font-semibold cursor-pointer">Eliminar Ingreso</button>
             </div>
           </div>
         ) : (
-          <form onSubmit={handleUpdate} className="space-y-4">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleUpdate} onInvalid={handleFormInvalid} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Lote</label>
                 <input required type="text" name="lote" value={formData.lote} onChange={handleChange} className="w-full p-2 border rounded" />
