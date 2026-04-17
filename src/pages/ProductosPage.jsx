@@ -66,10 +66,38 @@ const ProductosPage = () => {
     ), { duration: 6000, position: 'top-center' });
   };
 
+  const handleExport = async (filterCurrent = false) => {
+    try {
+      const params = new URLSearchParams();
+      if (filterCurrent) {
+        params.append('filter', 'current');
+        if (search) params.append('search', search);
+      }
+
+      const response = await api.get(`/api/export/stock?${params.toString()}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `stock_${new Date().toISOString().split('T')[0]}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (e) {
+      toast.error('Error al exportar stock');
+    }
+  };
+
   return (
     <div className="space-y-6 font-['var(--font-body)']">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Stock de Productos</h1>
+        <div className="flex gap-2">
+          <button onClick={() => handleExport(true)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
+            Exportar Vista
+          </button>
+          <button onClick={() => handleExport(false)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
+            Exportar Todo
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">
