@@ -12,10 +12,14 @@ const AppLayout = () => {
           <h2 className="text-xl font-bold font-['var(--font-heading)']">Inventario Farmacéutico</h2>
         </div>
         <nav className="flex-1 p-4 space-y-2 font-['var(--font-body)']">
-          <Link to="/dashboard" className="block py-2 px-4 rounded hover:bg-white/10">Dashboard</Link>
+          <Link to="/dashboard" className="block py-2 px-4 rounded hover:bg-white/10">Inicio</Link>
           <Link to="/ingresos" className="block py-2 px-4 rounded hover:bg-white/10">Ingresos</Link>
           <Link to="/egresos" className="block py-2 px-4 rounded hover:bg-white/10">Egresos</Link>
           <Link to="/productos" className="block py-2 px-4 rounded hover:bg-white/10">Stock</Link>
+          <Link to="/clientes" className="block py-2 px-4 rounded hover:bg-white/10">Clientes</Link>
+          <Link to="/proveedores" className="block py-2 px-4 rounded hover:bg-white/10">Proveedores</Link>
+          <Link to="/rechazos" className="block py-2 px-4 rounded hover:bg-white/10">Rechazos</Link>
+          <Link to="/remitos" className="block py-2 px-4 rounded hover:bg-white/10">Remitos</Link>
           {user?.role === 'admin' && (
             <Link to="/admin/usuarios" className="block py-2 px-4 rounded hover:bg-white/10 text-[var(--color-accent)] font-semibold">Usuarios</Link>
           )}

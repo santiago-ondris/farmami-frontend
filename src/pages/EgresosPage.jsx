@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../lib/axios';
 
 const EgresosPage = () => {
@@ -55,7 +56,7 @@ const EgresosPage = () => {
       document.body.appendChild(link);
       link.click();
     } catch (e) {
-      alert("Error al exportar");
+      toast.error('Error al exportar');
     }
   };
 

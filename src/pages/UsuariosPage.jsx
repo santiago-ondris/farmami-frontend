@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../lib/axios';
 import { handleFormInvalid } from '../lib/validation';
+import { confirmToast } from '../lib/confirmToast';
 
 const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     role: 'user'
   });
-  const [saving, setSaving] = useState(false);
 
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
       const { data } = await api.get('/api/users');
       setUsuarios(data);
-    } catch (e) {
-      toast.error("Error al obtener usuarios");
+    } catch (error) {
+      toast.error('Error al obtener usuarios');
     } finally {
       setLoading(false);
     }
@@ -31,41 +31,50 @@ const UsuariosPage = () => {
     fetchUsuarios();
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (event) => {
+    setFormData((prev) => ({ ...prev, [event.target.name]: event.target.value }));
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
+  const handleCreate = async (event) => {
+    event.preventDefault();
     setSaving(true);
     try {
       await api.post('/api/users', formData);
       setShowModal(false);
       setFormData({ email: '', password: '', role: 'user' });
       fetchUsuarios();
-    } catch (err) {
-      const errorData = err.response?.data?.error;
+      toast.success('Usuario creado');
+    } catch (error) {
+      const errorData = error.response?.data?.error;
       const errorMsg = Array.isArray(errorData) ? errorData[0].message : errorData;
-      toast.error(errorMsg || "Error al crear usuario");
+      toast.error(errorMsg || 'Error al crear usuario');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Está seguro que desea desactivar este usuario? No podrá acceder más.")) return;
+    const confirmed = await confirmToast({
+      title: 'Desactivar usuario',
+      description: 'No podra acceder mas.',
+      confirmLabel: 'Desactivar'
+    });
+
+    if (!confirmed) return;
+
     try {
       await api.delete(`/api/users/${id}`);
       fetchUsuarios();
-    } catch (err) {
-      toast.error("Error al desactivar usuario");
+      toast.success('Usuario desactivado');
+    } catch (error) {
+      toast.error('Error al desactivar usuario');
     }
   };
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Gestión de Usuarios</h1>
+        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Gestion de Usuarios</h1>
         <button onClick={() => setShowModal(true)} className="px-4 py-2 bg-[var(--color-primary)] text-white rounded font-semibold text-sm hover:opacity-90 cursor-pointer">
           + Nuevo Usuario
         </button>
@@ -87,17 +96,17 @@ const UsuariosPage = () => {
             ) : usuarios.length === 0 ? (
               <tr><td colSpan="4" className="p-4 text-center text-gray-500">No hay usuarios activos registrados</td></tr>
             ) : (
-              usuarios.map(u => (
-                <tr key={u.id} className="hover:bg-gray-50 border-b border-gray-100 text-sm last:border-0">
-                  <td className="p-3 font-mono text-xs text-gray-500">{u.id}</td>
-                  <td className="p-3 font-semibold text-[var(--color-primary)]">{u.email}</td>
+              usuarios.map((usuario) => (
+                <tr key={usuario.id} className="hover:bg-gray-50 border-b border-gray-100 text-sm last:border-0">
+                  <td className="p-3 font-mono text-xs text-gray-500">{usuario.id}</td>
+                  <td className="p-3 font-semibold text-[var(--color-primary)]">{usuario.email}</td>
                   <td className="p-3">
-                    <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
-                      {u.role}
+                    <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${usuario.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
+                      {usuario.role}
                     </span>
                   </td>
                   <td className="p-3 text-center">
-                    <button onClick={() => handleDelete(u.id)} className="text-red-500 hover:text-red-700 font-semibold text-xs border border-red-200 px-3 py-1 rounded hover:bg-red-50 transition-colors cursor-pointer">
+                    <button onClick={() => handleDelete(usuario.id)} className="text-red-500 hover:text-red-700 font-semibold text-xs border border-red-200 px-3 py-1 rounded hover:bg-red-50 transition-colors cursor-pointer">
                       Desactivar
                     </button>
                   </td>
@@ -118,14 +127,14 @@ const UsuariosPage = () => {
                 <input required type="email" name="email" className="w-full p-2 border border-gray-300 rounded outline-none focus:border-[var(--color-primary)]" value={formData.email} onChange={handleChange} />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Contraseña</label>
+                <label className="block text-sm font-medium mb-1">Contrasena</label>
                 <input required type="password" name="password" minLength="6" className="w-full p-2 border border-gray-300 rounded outline-none focus:border-[var(--color-primary)]" value={formData.password} onChange={handleChange} />
                 <p className="text-xs text-gray-400 mt-1">Debe ser de al menos 6 caracteres.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Rol</label>
                 <select name="role" className="w-full p-2 border border-gray-300 rounded outline-none focus:border-[var(--color-primary)]" value={formData.role} onChange={handleChange}>
-                  <option value="user">Operador (Estándar)</option>
+                  <option value="user">Operador (Estandar)</option>
                   <option value="admin">Administrador (Acceso Total)</option>
                 </select>
               </div>
@@ -139,7 +148,6 @@ const UsuariosPage = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

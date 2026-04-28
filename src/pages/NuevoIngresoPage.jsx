@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../lib/axios';
 import { handleFormInvalid } from '../lib/validation';
 import ProductAutocomplete from '../components/ProductAutocomplete';
+import ProveedorAutocomplete from '../components/ProveedorAutocomplete';
 
 const NuevoIngresoPage = () => {
   const navigate = useNavigate();
@@ -11,9 +12,10 @@ const NuevoIngresoPage = () => {
   const [formData, setFormData] = useState({
     product_id: '',
     fecha_ingreso: new Date().toISOString().split('T')[0],
+    nro_remito: '',
     lote: '',
     vencimiento: '',
-    proveedor: '',
+    proveedor_id: '',
     cadena_frio: false,
     cantidad: '',
     observaciones: ''
@@ -31,6 +33,10 @@ const NuevoIngresoPage = () => {
     e.preventDefault();
     if (!formData.product_id) {
       toast.error("Por favor, seleccione un producto.");
+      return;
+    }
+    if (!formData.proveedor_id) {
+      toast.error("Por favor, seleccione un proveedor.");
       return;
     }
     setLoading(true);
@@ -73,6 +79,11 @@ const NuevoIngresoPage = () => {
           </div>
 
           <div>
+            <label className="block text-sm font-medium mb-1">NRO de Remito</label>
+            <input type="text" name="nro_remito" value={formData.nro_remito} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
+          </div>
+
+          <div>
             <label className="block text-sm font-medium mb-1">Lote *</label>
             <input required type="text" name="lote" value={formData.lote} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
           </div>
@@ -84,7 +95,10 @@ const NuevoIngresoPage = () => {
 
           <div>
             <label className="block text-sm font-medium mb-1">Proveedor *</label>
-            <input required type="text" name="proveedor" value={formData.proveedor} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
+            <ProveedorAutocomplete
+              value={formData.proveedor_id}
+              onChange={(proveedorId) => setFormData((prev) => ({ ...prev, proveedor_id: proveedorId }))}
+            />
           </div>
 
           <div>

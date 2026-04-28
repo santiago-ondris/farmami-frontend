@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../lib/axios';
 import { handleFormInvalid } from '../lib/validation';
 import ProductAutocomplete from '../components/ProductAutocomplete';
@@ -63,7 +64,7 @@ const NuevoEgresoPage = () => {
   const handleSubmit = async (e, confirmNegative = false) => {
     e?.preventDefault();
     if (!formData.product_id) {
-      alert("Seleccione un producto.");
+      toast.error('Seleccione un producto.');
       return;
     }
 
@@ -83,7 +84,7 @@ const NuevoEgresoPage = () => {
         setStockResultante(err.response.data.stock_resultante);
         setShowStockModal(true);
       } else {
-        alert(err.response?.data?.error || "Error al crear egreso");
+        toast.error(err.response?.data?.error || 'Error al crear egreso');
       }
     } finally {
       setLoading(false);

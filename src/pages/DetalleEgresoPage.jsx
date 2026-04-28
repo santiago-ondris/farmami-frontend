@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../lib/axios';
 import { handleFormInvalid } from '../lib/validation';
+import { confirmToast } from '../lib/confirmToast';
 
 const DetalleEgresoPage = () => {
   const { id } = useParams();
@@ -30,20 +32,21 @@ const DetalleEgresoPage = () => {
         orden_compra: data.orden_compra || '',
         estado_remito: data.estado_remito
       });
-    } catch (e) {
-      if (e.response?.status === 404) navigate('/egresos');
+    } catch (error) {
+      if (error.response?.status === 404) navigate('/egresos');
+      else toast.error('No se pudo cargar el egreso');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
+  const handleUpdate = async (event) => {
+    event.preventDefault();
     setIsSaving(true);
     try {
       const payload = {
@@ -53,22 +56,31 @@ const DetalleEgresoPage = () => {
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.patch(`/api/egresos/${id}`, payload);
+      toast.success('Egreso actualizado');
       setIsEditing(false);
       fetchEgreso();
-    } catch (e) {
-      alert(e.response?.data?.error || "Error al actualizar");
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al actualizar');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("¿Está seguro que desea eliminar este egreso? Esta acción no se puede deshacer.")) return;
+    const confirmed = await confirmToast({
+      title: 'Eliminar egreso',
+      description: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Eliminar'
+    });
+
+    if (!confirmed) return;
+
     try {
       await api.delete(`/api/egresos/${id}`);
+      toast.success('Egreso eliminado');
       navigate('/egresos');
-    } catch (e) {
-      alert("Error al eliminar");
+    } catch (error) {
+      toast.error('Error al eliminar');
     }
   };
 
@@ -92,10 +104,7 @@ const DetalleEgresoPage = () => {
           </div>
           <div className="text-right">
             <span className="block text-xs text-gray-500 font-bold uppercase mb-1">Estado Remito</span>
-            <span className={`px-3 py-1 text-xs font-bold rounded-full border 
-                ${egreso.estado_remito === 'Pendiente' ? 'bg-amber-100 text-amber-800 border-amber-200' :
-                egreso.estado_remito === 'Entregado' ? 'bg-green-100 text-green-800 border-green-200' :
-                  'bg-gray-100 text-gray-800 border-gray-200'}`}>
+            <span className={`px-3 py-1 text-xs font-bold rounded-full border ${egreso.estado_remito === 'Pendiente' ? 'bg-amber-100 text-amber-800 border-amber-200' : egreso.estado_remito === 'Entregado' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>
               {egreso.estado_remito}
             </span>
           </div>
@@ -113,7 +122,7 @@ const DetalleEgresoPage = () => {
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Orden de Compra</span>{egreso.orden_compra || '-'}</div>
 
             <div className="md:col-span-2 pt-6 flex gap-3 border-t mt-4">
-              <button onClick={() => setIsEditing(true)} className="px-6 py-2 bg-[var(--color-primary)] text-white rounded font-semibold cursor-pointer">Editar Información</button>
+              <button onClick={() => setIsEditing(true)} className="px-6 py-2 bg-[var(--color-primary)] text-white rounded font-semibold cursor-pointer">Editar Informacion</button>
               <button onClick={handleDelete} className="px-6 py-2 border border-red-200 text-[var(--color-action)] hover:bg-red-50 rounded font-semibold cursor-pointer">Eliminar Egreso</button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../lib/axios';
 
 const IngresosPage = () => {
@@ -61,7 +62,7 @@ const IngresosPage = () => {
       document.body.appendChild(link);
       link.click();
     } catch (e) {
-      alert("Error al exportar");
+      toast.error('Error al exportar');
     }
   };
 
@@ -84,7 +85,7 @@ const IngresosPage = () => {
 
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Buscar (Producto, Lote, Proveedor)</label>
+          <label className="block text-xs font-medium text-gray-500 mb-1">Buscar (Producto, Lote, NRO de Remito, Proveedor)</label>
           <input type="text" className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]" value={search} onChange={e => {setSearch(e.target.value); setPage(1)}} />
         </div>
         <div>
@@ -110,6 +111,7 @@ const IngresosPage = () => {
           <thead>
             <tr className="bg-gray-50 text-gray-600 text-sm">
               <th className="p-3 border-b">Fecha</th>
+              <th className="p-3 border-b">NRO Remito</th>
               <th className="p-3 border-b">Producto</th>
               <th className="p-3 border-b">Prov/Lab</th>
               <th className="p-3 border-b">Lote</th>
@@ -121,16 +123,17 @@ const IngresosPage = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="8" className="p-4 text-center">Cargando...</td></tr>
+              <tr><td colSpan="9" className="p-4 text-center">Cargando...</td></tr>
             ) : ingresos.length === 0 ? (
-              <tr><td colSpan="8" className="p-4 text-center text-gray-500">No hay registros</td></tr>
+              <tr><td colSpan="9" className="p-4 text-center text-gray-500">No hay registros</td></tr>
             ) : (
               ingresos.map(i => (
                 <tr key={i.id} className="hover:bg-gray-50 text-sm border-b last:border-0 border-gray-100">
                   <td className="p-3">{new Date(i.fecha_ingreso).toLocaleDateString('es-AR')}</td>
+                  <td className="p-3">{i.nro_remito || '-'}</td>
                   <td className="p-3 font-semibold text-[var(--color-primary)]">{i.product?.nombre}</td>
                   <td className="p-3">
-                    <div className="text-xs font-medium">{i.proveedor}</div>
+                    <div className="text-xs font-medium">{i.proveedor_rel?.nombre || i.proveedor}</div>
                     <div className="text-[10px] text-gray-500">{i.product?.laboratorio}</div>
                   </td>
                   <td className="p-3">{i.lote}</td>

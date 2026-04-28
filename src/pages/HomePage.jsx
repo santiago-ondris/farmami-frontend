@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useStock } from '../hooks/useStock';
 import api from '../lib/axios';
 import { Link } from 'react-router-dom';
+import TermopharmaLogo from '../components/TermopharmaLogo';
 
 const HomePage = () => {
   const { stockData, loading, error } = useStock();
@@ -31,7 +32,25 @@ const HomePage = () => {
 
   return (
     <div className="space-y-8 font-['var(--font-body)']">
-      <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Dashboard</h1>
+      <section className="rounded-lg bg-[var(--color-primary)] px-6 py-7 text-white shadow-sm">
+        <div className="grid gap-6 lg:grid-cols-[320px_1fr] lg:items-center">
+          <div className="max-w-[280px]">
+            <TermopharmaLogo className="w-full" compact />
+          </div>
+          <div className="space-y-3">
+            <div>
+              <h1 className="text-3xl font-bold font-['var(--font-heading)']">Dashboard</h1>
+              <p className="mt-2 max-w-2xl text-sm text-white/80">
+                Control operativo de stock, vencimientos, egresos pendientes y trazabilidad documental.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold text-white/80">
+              <span className="rounded-full border border-white/15 px-3 py-1">Droguería Termopharma DGroup</span>
+              <span className="rounded-full border border-white/15 px-3 py-1">Provincia de Córdoba</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric Cards */}
