@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../lib/axios';
 import { handleFormInvalid } from '../lib/validation';
 
-const ProductAutocomplete = ({ value, onChange, error }) => {
+const ProductAutocomplete = ({ value, onChange, onSelectProduct, error }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -54,6 +54,7 @@ const ProductAutocomplete = ({ value, onChange, error }) => {
   const handleSelect = (prod) => {
     setQuery(`${prod.nombre} - ${prod.laboratorio}`);
     onChange(prod.id);
+    onSelectProduct?.(prod);
     setShowDropdown(false);
   };
 

@@ -36,14 +36,29 @@ const RemitoFormPage = () => {
     }));
   };
 
+  const handleProductSelect = (index, product) => {
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.map((item, itemIndex) => (
+        itemIndex === index
+          ? {
+              ...item,
+              product_id: product.id,
+              descripcion: product.nombre
+            }
+          : item
+      ))
+    }));
+  };
+
   const submit = async (force = false) => {
     if (!formData.cliente_id) {
-      toast.error('Seleccioná un cliente');
+      toast.error('Selecciona un cliente');
       return;
     }
 
     if (formData.items.some((item) => !item.product_id || !item.descripcion || !item.cantidad || !item.lote || !item.vencimiento)) {
-      toast.error('Completá todos los campos de los items');
+      toast.error('Completa todos los campos de los items');
       return;
     }
 
@@ -80,7 +95,7 @@ const RemitoFormPage = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Nuevo remito</h1>
-          <p className="text-sm text-gray-500">Cliente, fecha y carga dinámica de items con validación de stock.</p>
+          <p className="text-sm text-gray-500">Cliente, fecha y carga dinamica de items con validacion de stock.</p>
         </div>
         <Link to="/remitos" className="text-sm text-gray-500 hover:underline">Volver</Link>
       </div>
@@ -122,14 +137,14 @@ const RemitoFormPage = () => {
 
           <div className="space-y-4">
             {formData.items.map((item, index) => (
-              <div key={`item-${index}`} className="grid gap-4 rounded border border-gray-100 p-4 lg:grid-cols-[1.2fr_1fr_110px_160px_160px_56px]">
+              <div key={`item-${index}`} className="grid gap-4 rounded border border-gray-100 p-4 lg:grid-cols-[1.8fr_110px_160px_160px_56px]">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500">Producto</label>
-                  <ProductAutocomplete value={item.product_id} onChange={(productId) => handleItemChange(index, 'product_id', productId)} />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-500">Descripción</label>
-                  <input value={item.descripcion} onChange={(event) => handleItemChange(index, 'descripcion', event.target.value)} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+                  <ProductAutocomplete
+                    value={item.product_id}
+                    onChange={(productId) => handleItemChange(index, 'product_id', productId)}
+                    onSelectProduct={(product) => handleProductSelect(index, product)}
+                  />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500">Cantidad</label>
@@ -170,7 +185,7 @@ const RemitoFormPage = () => {
 
       <StockWarningModal
         open={showWarnings}
-        description="Uno o más productos quedarían con stock en negativo si emitís este remito."
+        description="Uno o mas productos quedarian con stock en negativo si emitis este remito."
         warnings={warningItems}
         onClose={() => setShowWarnings(false)}
         onConfirm={() => {
