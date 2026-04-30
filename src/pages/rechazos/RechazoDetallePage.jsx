@@ -48,33 +48,37 @@ const RechazoDetallePage = () => {
   if (!rechazo) return null;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 font-['var(--font-body)']">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto max-w-5xl space-y-6 font-['var(--font-body)']">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Detalle de rechazo</h1>
-          <p className="text-sm text-gray-500">{rechazo.product?.nombre} · Lote {rechazo.lote}</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Control de calidad</p>
+          <h1 className="section-title">Detalle de rechazo</h1>
+          <p className="section-subtitle mt-2">{rechazo.product?.nombre} · Lote {rechazo.lote}</p>
         </div>
-        <Link to="/rechazos" className="text-sm text-gray-500 hover:underline">Volver</Link>
+        <Link to="/rechazos" className="ghost-link">Volver</Link>
       </div>
 
-      <div className="space-y-6 rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Fecha</span>{formatDateDisplay(rechazo.fecha)}</div>
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Cantidad</span>{rechazo.cantidad}</div>
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Producto</span>{rechazo.product?.nombre || '-'}</div>
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Proveedor</span>{rechazo.proveedor?.nombre || '-'}</div>
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Lote</span>{rechazo.lote}</div>
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Remito</span>{rechazo.remito || '-'}</div>
-          <div className="md:col-span-2"><span className="block text-xs font-bold uppercase text-gray-500">Motivo</span>{rechazo.motivo_rechazo}</div>
+      <section className="panel p-6">
+        <div className="mb-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Registro</p>
+          <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Datos del rechazo</h2>
         </div>
 
-        <div className="flex gap-2 border-t border-gray-100 pt-4">
-          <Link to={`/rechazos/${id}/editar`} className="rounded bg-[var(--color-primary)] px-6 py-2 font-semibold text-white hover:opacity-90">Editar</Link>
-          <button type="button" onClick={handleDelete} className="rounded border border-red-200 px-6 py-2 font-semibold text-[var(--color-action)] hover:bg-red-50">
-            Eliminar
-          </button>
+        <div className="detail-grid md:grid-cols-2">
+          <div className="detail-item"><span className="detail-item-label">Fecha</span>{formatDateDisplay(rechazo.fecha)}</div>
+          <div className="detail-item"><span className="detail-item-label">Cantidad</span>{rechazo.cantidad}</div>
+          <div className="detail-item"><span className="detail-item-label">Producto</span>{rechazo.product?.nombre || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Proveedor</span>{rechazo.proveedor?.nombre || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Lote</span>{rechazo.lote}</div>
+          <div className="detail-item"><span className="detail-item-label">Remito</span>{rechazo.remito || '-'}</div>
+          <div className="detail-item md:col-span-2"><span className="detail-item-label">Motivo</span>{rechazo.motivo_rechazo}</div>
         </div>
-      </div>
+
+        <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+          <Link to={`/rechazos/${id}/editar`} className="primary-button">Editar</Link>
+          <button type="button" onClick={handleDelete} className="danger-button">Eliminar</button>
+        </div>
+      </section>
     </div>
   );
 };

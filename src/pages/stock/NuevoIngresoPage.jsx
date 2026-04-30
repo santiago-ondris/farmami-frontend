@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
+import DateField from '../../components/DateField';
 import { handleFormInvalid } from '../../lib/validation';
 import ProductAutocomplete from '../../components/ProductAutocomplete';
 import ProveedorAutocomplete from '../../components/ProveedorAutocomplete';
@@ -76,7 +77,7 @@ const NuevoIngresoPage = () => {
 
           <div>
             <label className="block text-sm font-medium mb-1">Fecha de Ingreso *</label>
-            <input required type="date" name="fecha_ingreso" value={formData.fecha_ingreso} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
+            <DateField value={formData.fecha_ingreso} onChange={(value) => setFormData((prev) => ({ ...prev, fecha_ingreso: value }))} />
           </div>
 
           <div>
@@ -91,7 +92,7 @@ const NuevoIngresoPage = () => {
 
           <div>
             <label className="block text-sm font-medium mb-1">Vencimiento *</label>
-            <input required type="date" name="vencimiento" value={formData.vencimiento} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
+            <DateField value={formData.vencimiento} onChange={(value) => setFormData((prev) => ({ ...prev, vencimiento: value }))} />
           </div>
 
           <div>

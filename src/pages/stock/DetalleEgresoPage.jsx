@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
+import DateField from '../../components/DateField';
 import { handleFormInvalid } from '../../lib/validation';
 import { confirmToast } from '../../lib/confirmToast';
 import { formatDateDisplay, formatDateInputValue } from '../../lib/date';
@@ -89,91 +90,95 @@ const DetalleEgresoPage = () => {
   if (!egreso) return null;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 font-['var(--font-body)']">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">
-          {isEditing ? 'Editar Egreso' : 'Detalle de Egreso'}
-        </h1>
-        <Link to="/egresos" className="text-gray-500 hover:underline">Volver a lista</Link>
+    <div className="mx-auto max-w-5xl space-y-6 font-['var(--font-body)']">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Movimiento de stock</p>
+          <h1 className="section-title">{isEditing ? 'Editar egreso' : 'Detalle de egreso'}</h1>
+        </div>
+        <Link to="/egresos" className="ghost-link">Volver a lista</Link>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <div className="mb-6 p-4 bg-gray-50 rounded border border-gray-100 flex justify-between items-start">
+      <section className="panel p-6">
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-gray-100 bg-slate-50 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-[var(--color-primary)] mb-1">Producto: {egreso.product?.nombre}</h2>
-            <p className="text-sm text-gray-500">Laboratorio: {egreso.product?.laboratorio}</p>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Producto</p>
+            <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">{egreso.product?.nombre}</h2>
+            <p className="mt-1 text-sm text-gray-500">Laboratorio: {egreso.product?.laboratorio}</p>
           </div>
-          <div className="text-right">
-            <span className="block text-xs text-gray-500 font-bold uppercase mb-1">Estado Remito</span>
-            <span className={`px-3 py-1 text-xs font-bold rounded-full border ${egreso.estado_remito === 'Pendiente' ? 'bg-amber-100 text-amber-800 border-amber-200' : egreso.estado_remito === 'Entregado' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>
+          <div>
+            <span className="detail-item-label">Estado remito</span>
+            <span className={`status-chip ${egreso.estado_remito === 'Pendiente' ? 'bg-amber-100 text-amber-800' : egreso.estado_remito === 'Entregado' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-800'}`}>
               {egreso.estado_remito}
             </span>
           </div>
         </div>
 
         {!isEditing ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">ID Registro</span>{egreso.id}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Fecha de Entrega</span>{formatDateDisplay(egreso.fecha_entrega)}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Cantidad</span><span className="font-bold text-[var(--color-action)] text-lg">{egreso.cantidad}</span></div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Empresa Solicitante</span>{egreso.empresa_solicitante}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Lote</span>{egreso.lote}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Vencimiento Lote</span>{formatDateDisplay(egreso.vencimiento)}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Serial</span>{egreso.serial || '-'}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Orden de Compra</span>{egreso.orden_compra || '-'}</div>
+          <div>
+            <div className="detail-grid md:grid-cols-2">
+              <div className="detail-item"><span className="detail-item-label">ID registro</span>{egreso.id}</div>
+              <div className="detail-item"><span className="detail-item-label">Fecha de entrega</span>{formatDateDisplay(egreso.fecha_entrega)}</div>
+              <div className="detail-item"><span className="detail-item-label">Cantidad</span><span className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-action)]">{egreso.cantidad}</span></div>
+              <div className="detail-item"><span className="detail-item-label">Empresa solicitante</span>{egreso.empresa_solicitante}</div>
+              <div className="detail-item"><span className="detail-item-label">Lote</span>{egreso.lote}</div>
+              <div className="detail-item"><span className="detail-item-label">Vencimiento lote</span>{formatDateDisplay(egreso.vencimiento)}</div>
+              <div className="detail-item"><span className="detail-item-label">Serial</span>{egreso.serial || '-'}</div>
+              <div className="detail-item"><span className="detail-item-label">Orden de compra</span>{egreso.orden_compra || '-'}</div>
+            </div>
 
-            <div className="md:col-span-2 pt-6 flex gap-3 border-t mt-4">
-              <button onClick={() => setIsEditing(true)} className="px-6 py-2 bg-[var(--color-primary)] text-white rounded font-semibold cursor-pointer">Editar Informacion</button>
-              <button onClick={handleDelete} className="px-6 py-2 border border-red-200 text-[var(--color-action)] hover:bg-red-50 rounded font-semibold cursor-pointer">Eliminar Egreso</button>
+            <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+              <button onClick={() => setIsEditing(true)} className="primary-button cursor-pointer">Editar informacion</button>
+              <button onClick={handleDelete} className="danger-button cursor-pointer">Eliminar egreso</button>
             </div>
           </div>
         ) : (
-          <form onSubmit={handleUpdate} onInvalid={handleFormInvalid} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleUpdate} onInvalid={handleFormInvalid} className="space-y-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium mb-1">Fecha Entrega</label>
-                <input required type="date" name="fecha_entrega" value={formData.fecha_entrega} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Fecha entrega</label>
+                <DateField value={formData.fecha_entrega} onChange={(value) => setFormData((prev) => ({ ...prev, fecha_entrega: value }))} />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Empresa Solicitante</label>
-                <input required type="text" name="empresa_solicitante" value={formData.empresa_solicitante} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Empresa solicitante</label>
+                <input required type="text" name="empresa_solicitante" value={formData.empresa_solicitante} onChange={handleChange} className="field-input" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Lote</label>
-                <input required type="text" name="lote" value={formData.lote} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Lote</label>
+                <input required type="text" name="lote" value={formData.lote} onChange={handleChange} className="field-input" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Vencimiento</label>
-                <input required type="date" name="vencimiento" value={formData.vencimiento} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Vencimiento</label>
+                <DateField value={formData.vencimiento} onChange={(value) => setFormData((prev) => ({ ...prev, vencimiento: value }))} />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Cantidad</label>
-                <input required type="number" min="1" name="cantidad" value={formData.cantidad} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Cantidad</label>
+                <input required type="number" min="1" name="cantidad" value={formData.cantidad} onChange={handleChange} className="field-input" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Estado Remito</label>
-                <select name="estado_remito" value={formData.estado_remito} onChange={handleChange} className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]">
+                <label className="field-label">Estado remito</label>
+                <select name="estado_remito" value={formData.estado_remito} onChange={handleChange} className="field-input">
                   <option value="Pendiente">Pendiente</option>
                   <option value="Entregado">Entregado</option>
                   <option value="Cancelado">Cancelado</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Serial</label>
-                <input type="text" name="serial" value={formData.serial} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Serial</label>
+                <input type="text" name="serial" value={formData.serial} onChange={handleChange} className="field-input" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Orden Compra</label>
-                <input type="text" name="orden_compra" value={formData.orden_compra} onChange={handleChange} className="w-full p-2 border rounded" />
+                <label className="field-label">Orden compra</label>
+                <input type="text" name="orden_compra" value={formData.orden_compra} onChange={handleChange} className="field-input" />
               </div>
             </div>
-            <div className="pt-4 border-t flex gap-2 justify-end">
-              <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-2 border rounded font-semibold cursor-pointer">Cancelar</button>
-              <button type="submit" disabled={isSaving} className="px-6 py-2 bg-[var(--color-primary)] text-white rounded font-semibold cursor-pointer disabled:opacity-50">{isSaving ? 'Guardando...' : 'Guardar Cambios'}</button>
+            <div className="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+              <button type="button" onClick={() => setIsEditing(false)} className="secondary-button cursor-pointer">Cancelar</button>
+              <button type="submit" disabled={isSaving} className="primary-button cursor-pointer disabled:opacity-50">{isSaving ? 'Guardando...' : 'Guardar cambios'}</button>
             </div>
           </form>
         )}
-      </div>
+      </section>
     </div>
   );
 };

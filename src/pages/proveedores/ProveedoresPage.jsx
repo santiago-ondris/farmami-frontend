@@ -59,24 +59,25 @@ const ProveedoresPage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Proveedores</h1>
-          <p className="text-sm text-gray-500">Alta, clasificacion documental e historial de evaluaciones.</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Comercial</p>
+          <h1 className="section-title">Proveedores</h1>
+          <p className="section-subtitle mt-2">Alta, clasificacion documental e historial de evaluaciones.</p>
         </div>
-        <Link to="/proveedores/nuevo" className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
-          + Nuevo proveedor
+        <Link to="/proveedores/nuevo" className="primary-button">
+          Nuevo proveedor
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 shadow-sm md:grid-cols-[1fr_260px]">
+      <div className="filter-panel grid grid-cols-1 gap-4 p-4 md:grid-cols-[1fr_260px]">
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">Buscar por nombre, numero, CUIT o GLN</label>
-          <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+          <label className="field-label">Buscar por nombre, numero, CUIT o GLN</label>
+          <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} className="field-input" />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">Tipo</label>
-          <select value={tipo} onChange={(event) => { setTipo(event.target.value); setPage(1); }} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]">
+          <label className="field-label">Tipo</label>
+          <select value={tipo} onChange={(event) => { setTipo(event.target.value); setPage(1); }} className="field-input">
             <option value="">Todos</option>
             {TIPOS_PROVEEDOR.map((option) => (
               <option key={option} value={option}>{option}</option>
@@ -85,18 +86,18 @@ const ProveedoresPage = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-100 bg-white shadow-sm">
-        <table className="min-w-[1180px] w-full border-collapse text-left">
+      <div className="data-table-wrap">
+        <table className="data-table min-w-[1220px]">
           <thead>
-            <tr className="bg-gray-50 text-sm text-gray-600">
-              <th className="border-b p-3">Numero</th>
-              <th className="border-b p-3">Nombre</th>
-              <th className="border-b p-3">Tipo</th>
-              <th className="border-b p-3">CUIT</th>
-              <th className="border-b p-3">GLN</th>
-              <th className="border-b p-3">Producto/Servicio</th>
-              <th className="border-b p-3">Documentacion</th>
-              <th className="border-b p-3">Acciones</th>
+            <tr>
+              <th>Numero</th>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>CUIT</th>
+              <th>GLN</th>
+              <th>Producto o servicio</th>
+              <th>Documentacion</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -105,22 +106,22 @@ const ProveedoresPage = () => {
             ) : proveedores.length === 0 ? (
               <tr><td colSpan="8" className="p-4 text-center text-gray-500">No hay proveedores cargados.</td></tr>
             ) : proveedores.map((proveedor) => (
-              <tr key={proveedor.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
-                <td className="p-3 font-medium text-[var(--color-primary)]">{proveedor.numero}</td>
-                <td className="p-3">{proveedor.nombre}</td>
-                <td className="p-3">{proveedor.tipo}</td>
-                <td className="p-3">{proveedor.cuit || '-'}</td>
-                <td className="p-3">{proveedor.gln || '-'}</td>
-                <td className="p-3">{proveedor.producto_o_servicio || '-'}</td>
-                <td className="p-3">
-                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${proveedor.documentacion_completa ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+              <tr key={proveedor.id}>
+                <td className="font-medium text-[var(--color-primary)]">{proveedor.numero}</td>
+                <td>{proveedor.nombre}</td>
+                <td>{proveedor.tipo}</td>
+                <td>{proveedor.cuit || '-'}</td>
+                <td>{proveedor.gln || '-'}</td>
+                <td>{proveedor.producto_o_servicio || '-'}</td>
+                <td>
+                  <span className={`status-chip ${proveedor.documentacion_completa ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                     {proveedor.documentacion_completa ? 'Completa' : 'Incompleta'}
                   </span>
                 </td>
-                <td className="p-3">
-                  <div className="flex gap-3 text-xs font-semibold">
-                    <Link to={`/proveedores/${proveedor.id}`} className="text-[var(--color-accent)] hover:underline">Ver ficha</Link>
-                    <button type="button" onClick={() => handleDelete(proveedor.id)} className="text-[var(--color-action)] hover:underline">Eliminar</button>
+                <td>
+                  <div className="flex gap-4 text-sm">
+                    <Link to={`/proveedores/${proveedor.id}`} className="table-link">Ver ficha</Link>
+                    <button type="button" onClick={() => handleDelete(proveedor.id)} className="table-danger cursor-pointer">Eliminar</button>
                   </div>
                 </td>
               </tr>
@@ -129,11 +130,11 @@ const ProveedoresPage = () => {
         </table>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-gray-500">
+      <div className="flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <div>Mostrando {proveedores.length} de {total} registros</div>
         <div className="flex gap-2">
-          <button type="button" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="rounded border px-3 py-1 disabled:opacity-50">Anterior</button>
-          <button type="button" disabled={proveedores.length < limit} onClick={() => setPage((prev) => prev + 1)} className="rounded border px-3 py-1 disabled:opacity-50">Siguiente</button>
+          <button type="button" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="toolbar-button disabled:opacity-50">Anterior</button>
+          <button type="button" disabled={proveedores.length < limit} onClick={() => setPage((prev) => prev + 1)} className="toolbar-button disabled:opacity-50">Siguiente</button>
         </div>
       </div>
     </div>

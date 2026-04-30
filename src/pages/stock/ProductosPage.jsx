@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../../lib/axios';
 import { useAuth } from '../../context/AuthContext';
-import toast from 'react-hot-toast';
 
 const ProductosPage = () => {
   const { user } = useAuth();
@@ -25,7 +25,7 @@ const ProductosPage = () => {
         const { data } = await api.get(`/api/products?${params.toString()}`);
         setProductos(data.data);
         setTotal(data.total);
-      } catch (err) { }
+      } catch (err) {}
       setLoading(false);
     };
 
@@ -33,37 +33,41 @@ const ProductosPage = () => {
     return () => clearTimeout(tid);
   }, [search, page]);
 
-  const handleDelete = (id, nombre) => {
-    toast((t) => (
-      <div className="flex flex-col gap-2 p-1">
-        <p className="text-sm font-semibold text-gray-800">¿Estás seguro?</p>
-        <div className="flex gap-2 justify-end">
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 font-medium cursor-pointer"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={async () => {
-              toast.dismiss(t.id);
-              const tid = toast.loading('Eliminando...');
-              try {
-                await api.delete(`/api/products/${id}`);
-                setProductos(prev => prev.filter(p => p.id !== id));
-                setTotal(prev => prev - 1);
-                toast.success('Producto eliminado', { id: tid });
-              } catch (err) {
-                toast.error(err.response?.data?.error || 'Error al eliminar', { id: tid });
-              }
-            }}
-            className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 font-bold cursor-pointer"
-          >
-            Eliminar
-          </button>
+  const handleDelete = (id) => {
+    toast(
+      (toastInstance) => (
+        <div className="w-full max-w-sm rounded-3xl border border-gray-200 bg-white p-5 shadow-2xl">
+          <p className="text-sm font-semibold text-gray-900">Eliminar producto</p>
+          <p className="mt-1 text-sm text-gray-500">El producto se dara de baja y dejara de estar disponible en el listado.</p>
+          <div className="mt-5 flex justify-end gap-2">
+            <button
+              onClick={() => toast.dismiss(toastInstance.id)}
+              className="secondary-button !px-4 !py-2 !text-xs"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(toastInstance.id);
+                const loadingToastId = toast.loading('Eliminando...');
+                try {
+                  await api.delete(`/api/products/${id}`);
+                  setProductos((prev) => prev.filter((producto) => producto.id !== id));
+                  setTotal((prev) => prev - 1);
+                  toast.success('Producto eliminado', { id: loadingToastId });
+                } catch (err) {
+                  toast.error(err.response?.data?.error || 'Error al eliminar', { id: loadingToastId });
+                }
+              }}
+              className="danger-button !px-4 !py-2 !text-xs"
+            >
+              Eliminar
+            </button>
+          </div>
         </div>
-      </div>
-    ), { duration: 6000, position: 'top-center' });
+      ),
+      { duration: 6000, position: 'top-center' }
+    );
   };
 
   const handleExport = async (filterCurrent = false) => {
@@ -88,33 +92,45 @@ const ProductosPage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Stock de Productos</h1>
-        <div className="flex gap-2">
-          <button onClick={() => handleExport(true)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
-            Exportar Vista
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Inventario</p>
+          <h1 className="section-title">Stock de productos</h1>
+          <p className="section-subtitle mt-2">Catalogo operativo con stock consolidado y acceso al historial de movimientos.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => handleExport(true)} className="toolbar-button cursor-pointer">
+            Exportar vista
           </button>
-          <button onClick={() => handleExport(false)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
-            Exportar Todo
+          <button onClick={() => handleExport(false)} className="toolbar-button cursor-pointer">
+            Exportar todo
           </button>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">
-        <div className="flex-1 max-w-md">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Buscar Producto o Laboratorio</label>
-          <input type="text" className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
+      <div className="filter-panel p-4">
+        <div className="max-w-md">
+          <label className="field-label">Buscar producto o laboratorio</label>
+          <input
+            type="text"
+            className="field-input"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[600px]">
+      <div className="data-table-wrap">
+        <table className="data-table min-w-[700px]">
           <thead>
-            <tr className="bg-gray-50 text-gray-600 text-sm">
-              <th className="p-3 border-b">Producto</th>
-              <th className="p-3 border-b">Laboratorio</th>
-              <th className="p-3 border-b text-right">Stock Actual</th>
-              <th className="p-3 border-b text-center">Acciones</th>
+            <tr>
+              <th>Producto</th>
+              <th>Laboratorio</th>
+              <th className="text-right">Stock actual</th>
+              <th className="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -123,22 +139,22 @@ const ProductosPage = () => {
             ) : productos.length === 0 ? (
               <tr><td colSpan="4" className="p-4 text-center text-gray-500">No hay productos registrados</td></tr>
             ) : (
-              productos.map(p => (
-                <tr key={p.id} className="hover:bg-gray-50 border-b border-gray-100 text-sm last:border-0">
-                  <td className="p-3 font-semibold text-[var(--color-primary)]">{p.nombre}</td>
-                  <td className="p-3">{p.laboratorio}</td>
-                  <td className="p-3 text-right">
-                    <span className={`font-bold text-lg ${p.stock < 0 ? 'text-red-600' : 'text-gray-800'}`}>
-                      {p.stock}
+              productos.map((producto) => (
+                <tr key={producto.id}>
+                  <td className="font-semibold text-[var(--color-primary)]">{producto.nombre}</td>
+                  <td>{producto.laboratorio}</td>
+                  <td className="text-right">
+                    <span className={`font-['var(--font-heading)'] text-2xl font-bold ${producto.stock < 0 ? 'text-red-600' : 'text-gray-800'}`}>
+                      {producto.stock}
                     </span>
                   </td>
-                  <td className="p-3 text-center">
-                    <div className="flex items-center justify-center gap-3">
-                      <Link to={`/productos/${p.id}`} className="text-[var(--color-accent)] font-semibold hover:underline">Ver Historial</Link>
+                  <td>
+                    <div className="flex items-center justify-center gap-4 text-sm">
+                      <Link to={`/productos/${producto.id}`} className="table-link">Ver historial</Link>
                       {user?.role === 'admin' && (
                         <button
-                          onClick={() => handleDelete(p.id, p.nombre)}
-                          className="text-red-500 hover:text-red-700 font-semibold text-xs cursor-pointer"
+                          onClick={() => handleDelete(producto.id)}
+                          className="table-danger cursor-pointer"
                           title="Eliminar producto"
                         >
                           Eliminar
@@ -153,14 +169,17 @@ const ProductosPage = () => {
         </table>
       </div>
 
-      <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
+      <div className="flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <div>Mostrando {productos.length} de {total} registros</div>
         <div className="flex gap-2">
-          <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Anterior</button>
-          <button disabled={productos.length < limit} onClick={() => setPage(p => p + 1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Siguiente</button>
+          <button disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="toolbar-button cursor-pointer disabled:opacity-50">
+            Anterior
+          </button>
+          <button disabled={productos.length < limit} onClick={() => setPage((prev) => prev + 1)} className="toolbar-button cursor-pointer disabled:opacity-50">
+            Siguiente
+          </button>
         </div>
       </div>
-
     </div>
   );
 };

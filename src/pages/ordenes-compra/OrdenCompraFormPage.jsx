@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
+import DateField from '../../components/DateField';
 import { handleFormInvalid } from '../../lib/validation';
 import OrdenCompraProveedorAutocomplete from '../../components/ordenes-compra/OrdenCompraProveedorAutocomplete';
 import OrdenCompraItemsEditor from '../../components/ordenes-compra/OrdenCompraItemsEditor';
@@ -170,7 +171,7 @@ const OrdenCompraFormPage = () => {
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Fecha de entrega</label>
-            <input type="date" name="fecha_entrega" value={formData.fecha_entrega} onChange={(event) => setFormData((prev) => ({ ...prev, fecha_entrega: event.target.value }))} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+            <DateField value={formData.fecha_entrega} onChange={(value) => setFormData((prev) => ({ ...prev, fecha_entrega: value }))} />
           </div>
         </div>
 

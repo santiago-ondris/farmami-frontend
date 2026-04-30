@@ -59,33 +59,32 @@ const OrdenesCompraPage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Ordenes de compra</h1>
-          <p className="text-sm text-gray-500">Alta, consulta y seguimiento interno de compras a proveedores.</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Comercial</p>
+          <h1 className="section-title">Ordenes de compra</h1>
+          <p className="section-subtitle mt-2">Alta, consulta y seguimiento interno de compras a proveedores.</p>
         </div>
-        <Link to="/ordenes-compra/nuevo" className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
-          + Nueva orden
-        </Link>
+        <Link to="/ordenes-compra/nuevo" className="primary-button">Nueva orden</Link>
       </div>
 
-      <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-        <label className="mb-1 block text-xs font-medium text-gray-500">Buscar por numero, proveedor o condicion de pago</label>
-        <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+      <div className="filter-panel p-4">
+        <label className="field-label">Buscar por numero, proveedor o condicion de pago</label>
+        <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} className="field-input" />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-100 bg-white shadow-sm">
-        <table className="min-w-[1120px] w-full border-collapse text-left">
+      <div className="data-table-wrap">
+        <table className="data-table min-w-[1140px]">
           <thead>
-            <tr className="bg-gray-50 text-sm text-gray-600">
-              <th className="border-b p-3">Numero</th>
-              <th className="border-b p-3">Fecha</th>
-              <th className="border-b p-3">Proveedor</th>
-              <th className="border-b p-3">Condicion de pago</th>
-              <th className="border-b p-3">Fecha de entrega</th>
-              <th className="border-b p-3">Items</th>
-              <th className="border-b p-3">Importe total</th>
-              <th className="border-b p-3">Acciones</th>
+            <tr>
+              <th>Numero</th>
+              <th>Fecha</th>
+              <th>Proveedor</th>
+              <th>Condicion de pago</th>
+              <th>Fecha de entrega</th>
+              <th>Items</th>
+              <th>Importe total</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -94,18 +93,18 @@ const OrdenesCompraPage = () => {
             ) : ordenesCompra.length === 0 ? (
               <tr><td colSpan="8" className="p-4 text-center text-gray-500">No hay ordenes de compra cargadas.</td></tr>
             ) : ordenesCompra.map((ordenCompra) => (
-              <tr key={ordenCompra.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
-                <td className="p-3 font-semibold text-[var(--color-primary)]">{ordenCompra.numero}</td>
-                <td className="p-3">{formatDateDisplay(ordenCompra.fecha)}</td>
-                <td className="p-3">{ordenCompra.proveedor?.nombre}</td>
-                <td className="p-3">{ordenCompra.condicion_pago}</td>
-                <td className="p-3">{ordenCompra.fecha_entrega ? formatDateDisplay(ordenCompra.fecha_entrega) : '-'}</td>
-                <td className="p-3">{ordenCompra.items_count}</td>
-                <td className="p-3">{formatMoney(ordenCompra.importe_total)}</td>
-                <td className="p-3">
-                  <div className="flex gap-3 text-xs font-semibold">
-                    <Link to={`/ordenes-compra/${ordenCompra.id}`} className="text-[var(--color-accent)] hover:underline">Detalle</Link>
-                    <button type="button" onClick={() => handleDelete(ordenCompra.id)} className="text-[var(--color-action)] hover:underline">Eliminar</button>
+              <tr key={ordenCompra.id}>
+                <td className="font-semibold text-[var(--color-primary)]">{ordenCompra.numero}</td>
+                <td>{formatDateDisplay(ordenCompra.fecha)}</td>
+                <td>{ordenCompra.proveedor?.nombre}</td>
+                <td>{ordenCompra.condicion_pago}</td>
+                <td>{ordenCompra.fecha_entrega ? formatDateDisplay(ordenCompra.fecha_entrega) : '-'}</td>
+                <td>{ordenCompra.items_count}</td>
+                <td>{formatMoney(ordenCompra.importe_total)}</td>
+                <td>
+                  <div className="flex gap-4 text-sm">
+                    <Link to={`/ordenes-compra/${ordenCompra.id}`} className="table-link">Detalle</Link>
+                    <button type="button" onClick={() => handleDelete(ordenCompra.id)} className="table-danger cursor-pointer">Eliminar</button>
                   </div>
                 </td>
               </tr>
@@ -114,11 +113,11 @@ const OrdenesCompraPage = () => {
         </table>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-gray-500">
+      <div className="flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <div>Mostrando {ordenesCompra.length} de {total} registros</div>
         <div className="flex gap-2">
-          <button type="button" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="rounded border px-3 py-1 disabled:opacity-50">Anterior</button>
-          <button type="button" disabled={ordenesCompra.length < limit} onClick={() => setPage((prev) => prev + 1)} className="rounded border px-3 py-1 disabled:opacity-50">Siguiente</button>
+          <button type="button" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="toolbar-button disabled:opacity-50">Anterior</button>
+          <button type="button" disabled={ordenesCompra.length < limit} onClick={() => setPage((prev) => prev + 1)} className="toolbar-button disabled:opacity-50">Siguiente</button>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
@@ -8,7 +8,6 @@ const EgresosPage = () => {
   const [egresos, setEgresos] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  
   const [search, setSearch] = useState('');
   const [estadoRemito, setEstadoRemito] = useState('');
   const [page, setPage] = useState(1);
@@ -33,10 +32,11 @@ const EgresosPage = () => {
         setLoading(false);
       }
     };
-    
+
     const debounceId = setTimeout(() => {
       fetchEgresos();
     }, 300);
+
     return () => clearTimeout(debounceId);
   }, [search, estadoRemito, page]);
 
@@ -48,7 +48,7 @@ const EgresosPage = () => {
         if (search) params.append('search', search);
         if (estadoRemito) params.append('estado_remito', estadoRemito);
       }
-      
+
       const response = await api.get(`/api/export/egresos?${params.toString()}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -62,39 +62,41 @@ const EgresosPage = () => {
   };
 
   const getBadgeColor = (estado) => {
-    switch(estado) {
-      case 'Entregado': return 'bg-green-100 text-green-800';
-      case 'Pendiente': return 'bg-amber-100 text-amber-800';
-      case 'Cancelado': return 'bg-gray-200 text-gray-800';
-      default: return 'bg-blue-100 text-blue-800';
+    switch (estado) {
+      case 'Entregado':
+        return 'bg-green-100 text-green-800';
+      case 'Pendiente':
+        return 'bg-amber-100 text-amber-800';
+      case 'Cancelado':
+        return 'bg-gray-200 text-gray-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
     }
   };
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Egresos</h1>
-        <div className="flex gap-2">
-          <button onClick={() => handleExport(true)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
-            Exportar Vista
-          </button>
-          <button onClick={() => handleExport(false)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
-            Exportar Todo
-          </button>
-          <Link to="/egresos/nuevo" className="px-4 py-2 bg-[var(--color-action)] text-white rounded font-semibold text-sm hover:opacity-90">
-            + Nuevo Egreso
-          </Link>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Operacion</p>
+          <h1 className="section-title">Egresos</h1>
+          <p className="section-subtitle mt-2">Despachos emitidos con lectura clara de estado, empresa solicitante y stock comprometido.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => handleExport(true)} className="toolbar-button cursor-pointer">Exportar vista</button>
+          <button onClick={() => handleExport(false)} className="toolbar-button cursor-pointer">Exportar todo</button>
+          <Link to="/egresos/nuevo" className="primary-button">Nuevo egreso</Link>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Buscar (Producto, Lote, Empresa)</label>
-          <input type="text" className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]" value={search} onChange={e => {setSearch(e.target.value); setPage(1)}} />
+      <div className="filter-panel flex flex-wrap items-end gap-4 p-4">
+        <div className="min-w-[240px] flex-1">
+          <label className="field-label">Buscar producto, lote o empresa</label>
+          <input type="text" className="field-input" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Estado Remito</label>
-          <select className="w-full p-2 border rounded" value={estadoRemito} onChange={e => {setEstadoRemito(e.target.value); setPage(1)}}>
+          <label className="field-label">Estado de remito</label>
+          <select className="field-input min-w-[180px]" value={estadoRemito} onChange={(e) => { setEstadoRemito(e.target.value); setPage(1); }}>
             <option value="">Todos</option>
             <option value="Pendiente">Pendiente</option>
             <option value="Entregado">Entregado</option>
@@ -103,16 +105,16 @@ const EgresosPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[800px]">
+      <div className="data-table-wrap">
+        <table className="data-table min-w-[920px]">
           <thead>
-            <tr className="bg-gray-50 text-gray-600 text-sm">
-              <th className="p-3 border-b">F. Entrega</th>
-              <th className="p-3 border-b">Producto / Lote</th>
-              <th className="p-3 border-b text-right">Cant</th>
-              <th className="p-3 border-b">Empresa</th>
-              <th className="p-3 border-b">Remito</th>
-              <th className="p-3 border-b">Acciones</th>
+            <tr>
+              <th>F. entrega</th>
+              <th>Producto / lote</th>
+              <th className="text-right">Cant.</th>
+              <th>Empresa</th>
+              <th>Remito</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -121,23 +123,21 @@ const EgresosPage = () => {
             ) : egresos.length === 0 ? (
               <tr><td colSpan="6" className="p-4 text-center text-gray-500">No hay registros</td></tr>
             ) : (
-              egresos.map(e => (
-                <tr key={e.id} className={`hover:bg-gray-50 text-sm border-b last:border-0 border-gray-100 ${e.estado_remito === 'Cancelado' ? 'opacity-60' : ''}`}>
-                  <td className="p-3">{formatDateDisplay(e.fecha_entrega)}</td>
-                  <td className="p-3">
-                    <div className="font-semibold text-[var(--color-primary)]">{e.product?.nombre}</div>
-                    <div className="text-xs">Lote: {e.lote}</div>
+              egresos.map((egreso) => (
+                <tr key={egreso.id} className={egreso.estado_remito === 'Cancelado' ? 'opacity-60' : ''}>
+                  <td>{formatDateDisplay(egreso.fecha_entrega)}</td>
+                  <td>
+                    <div className="font-semibold text-[var(--color-primary)]">{egreso.product?.nombre}</div>
+                    <div className="text-xs text-gray-500">Lote: {egreso.lote}</div>
                   </td>
-                  <td className="p-3 text-right font-bold text-lg">{e.cantidad}</td>
-                  <td className="p-3 font-medium">{e.empresa_solicitante}</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${getBadgeColor(e.estado_remito)}`}>
-                      {e.estado_remito}
+                  <td className="text-right font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-action)]">{egreso.cantidad}</td>
+                  <td className="font-medium">{egreso.empresa_solicitante}</td>
+                  <td>
+                    <span className={`status-chip ${getBadgeColor(egreso.estado_remito)}`}>
+                      {egreso.estado_remito}
                     </span>
                   </td>
-                  <td className="p-3">
-                    <Link to={`/egresos/${e.id}`} className="text-[var(--color-accent)] hover:underline font-semibold text-xs">Detalle</Link>
-                  </td>
+                  <td><Link to={`/egresos/${egreso.id}`} className="table-link">Detalle</Link></td>
                 </tr>
               ))
             )}
@@ -145,11 +145,11 @@ const EgresosPage = () => {
         </table>
       </div>
 
-      <div className="flex justify-between items-center text-sm text-gray-500">
+      <div className="flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <div>Mostrando {egresos.length} de {total} registros</div>
         <div className="flex gap-2">
-          <button disabled={page === 1} onClick={()=>setPage(p=>p-1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Anterior</button>
-          <button disabled={egresos.length < limit} onClick={()=>setPage(p=>p+1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Siguiente</button>
+          <button disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="toolbar-button cursor-pointer disabled:opacity-50">Anterior</button>
+          <button disabled={egresos.length < limit} onClick={() => setPage((prev) => prev + 1)} className="toolbar-button cursor-pointer disabled:opacity-50">Siguiente</button>
         </div>
       </div>
     </div>

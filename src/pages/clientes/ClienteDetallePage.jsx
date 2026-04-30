@@ -36,41 +36,41 @@ const ClienteDetallePage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">{cliente.nombre}</h1>
-          <p className="text-sm text-gray-500">{cliente.establecimiento}</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Ficha de cliente</p>
+          <h1 className="section-title">{cliente.nombre}</h1>
+          <p className="section-subtitle mt-2">{cliente.establecimiento}</p>
         </div>
-        <div className="flex gap-2">
-          <Link to="/clientes" className="rounded border border-gray-300 px-4 py-2 text-sm font-semibold hover:bg-gray-50">
-            Volver
-          </Link>
-          <Link to={`/clientes/${id}/editar`} className="rounded border border-gray-300 px-4 py-2 text-sm font-semibold hover:bg-gray-50">
-            Editar
-          </Link>
-          <Link to={`/clientes/${id}/evaluaciones/nueva`} className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
-            Nueva evaluación
-          </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/clientes" className="secondary-button">Volver</Link>
+          <Link to={`/clientes/${id}/editar`} className="secondary-button">Editar</Link>
+          <Link to={`/clientes/${id}/evaluaciones/nueva`} className="primary-button">Nueva evaluacion</Link>
         </div>
       </div>
 
-      <section className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-6 shadow-sm md:grid-cols-2 xl:grid-cols-3">
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Dirección</span>{cliente.direccion || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Localidad</span>{cliente.localidad || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Dirección técnica</span>{cliente.direccion_tecnica || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Vigencia habilitación</span>{cliente.vigencia_habilitacion ? formatDateDisplay(cliente.vigencia_habilitacion) : '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">GLN</span>{cliente.gln || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Contacto</span>{cliente.contacto || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">CUIT</span>{cliente.cuit || '-'}</div>
+      <section className="panel p-6">
+        <div className="mb-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Datos generales</p>
+          <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Informacion administrativa</h2>
+        </div>
+        <div className="detail-grid md:grid-cols-2 xl:grid-cols-3">
+          <div className="detail-item"><span className="detail-item-label">Direccion</span>{cliente.direccion || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Localidad</span>{cliente.localidad || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Direccion tecnica</span>{cliente.direccion_tecnica || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Vigencia habilitacion</span>{cliente.vigencia_habilitacion ? formatDateDisplay(cliente.vigencia_habilitacion) : '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">GLN</span>{cliente.gln || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Contacto</span>{cliente.contacto || '-'}</div>
+          <div className="detail-item md:col-span-2 xl:col-span-1"><span className="detail-item-label">CUIT</span>{cliente.cuit || '-'}</div>
+        </div>
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Historial de evaluaciones</h2>
-              <p className="text-sm text-gray-500">Ordenado por fecha descendente.</p>
-            </div>
+        <div className="panel p-6">
+          <div className="mb-4">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Seguimiento</p>
+            <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Historial de evaluaciones</h2>
+            <p className="mt-2 text-sm text-gray-500">Ordenado por fecha descendente.</p>
           </div>
 
           {cliente.evaluaciones?.length ? (
@@ -82,14 +82,16 @@ const ClienteDetallePage = () => {
                     key={evaluacion.id}
                     type="button"
                     onClick={() => setSelectedEvaluationId(evaluacion.id)}
-                    className={`w-full rounded border p-4 text-left ${selectedEvaluationId === evaluacion.id ? 'border-[var(--color-primary)] bg-gray-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
+                    className={`w-full rounded-2xl border px-4 py-4 text-left transition-colors ${
+                      selectedEvaluationId === evaluacion.id ? 'border-[var(--color-primary)] bg-slate-50' : 'border-gray-200 bg-white hover:bg-gray-50'
+                    }`}
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <div className="font-semibold text-[var(--color-primary)]">{evaluacion.numero_evaluacion}</div>
                         <div className="text-xs text-gray-500">{formatDateDisplay(evaluacion.fecha)}</div>
                       </div>
-                      <span className={`rounded-full px-3 py-1 text-xs font-bold ${result === 'APTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      <span className={`status-chip ${result === 'APTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                         {result}
                       </span>
                     </div>
@@ -98,31 +100,36 @@ const ClienteDetallePage = () => {
               })}
             </div>
           ) : (
-            <p className="text-sm text-gray-500">Todavía no hay evaluaciones cargadas.</p>
+            <div className="rounded-2xl border border-dashed border-gray-200 px-4 py-8 text-sm text-gray-500">
+              Todavia no hay evaluaciones cargadas.
+            </div>
           )}
         </div>
 
-        <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Detalle de evaluación</h2>
+        <div className="panel p-6">
+          <div className="mb-4">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Detalle</p>
+            <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Evaluacion seleccionada</h2>
+          </div>
           {selectedEvaluation ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <div className="font-semibold text-[var(--color-primary)]">{selectedEvaluation.numero_evaluacion}</div>
                   <div className="text-sm text-gray-500">{formatDateDisplay(selectedEvaluation.fecha)}</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${getEvaluacionResult(selectedEvaluation, CAMPOS_EVALUACION_CLIENTE) === 'APTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  <span className={`status-chip ${getEvaluacionResult(selectedEvaluation, CAMPOS_EVALUACION_CLIENTE) === 'APTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {getEvaluacionResult(selectedEvaluation, CAMPOS_EVALUACION_CLIENTE)}
                   </span>
-                  <Link to={`/clientes/${id}/evaluaciones/${selectedEvaluation.id}/editar`} className="rounded border border-gray-300 px-3 py-1 text-xs font-semibold hover:bg-gray-50">
+                  <Link to={`/clientes/${id}/evaluaciones/${selectedEvaluation.id}/editar`} className="secondary-button !px-3 !py-2 !text-xs">
                     Editar evaluacion
                   </Link>
                 </div>
               </div>
               <div className="space-y-2">
                 {CAMPOS_EVALUACION_CLIENTE.map(([key, label]) => (
-                  <div key={key} className="flex items-center justify-between rounded border border-gray-100 px-3 py-2 text-sm">
+                  <div key={key} className="flex items-center justify-between rounded-2xl border border-gray-100 bg-slate-50/70 px-4 py-3 text-sm">
                     <span>{label}</span>
                     <span className={`font-semibold ${selectedEvaluation[key] === 'APTO' ? 'text-green-700' : 'text-red-700'}`}>
                       {selectedEvaluation[key] === 'APTO' ? 'APTO' : 'NO APTO'}
@@ -132,7 +139,9 @@ const ClienteDetallePage = () => {
               </div>
             </div>
           ) : (
-            <p className="text-sm text-gray-500">Seleccioná una evaluación para ver el detalle.</p>
+            <div className="rounded-2xl border border-dashed border-gray-200 px-4 py-8 text-sm text-gray-500">
+              Selecciona una evaluacion para ver el detalle.
+            </div>
           )}
         </div>
       </section>

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
+import DateField from '../../components/DateField';
 import { formatDateDisplay } from '../../lib/date';
 
 const IngresosPage = () => {
   const [ingresos, setIngresos] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  
   const [search, setSearch] = useState('');
   const [cadenaFrio, setCadenaFrio] = useState('');
   const [fechaDesde, setFechaDesde] = useState('');
@@ -37,10 +37,11 @@ const IngresosPage = () => {
         setLoading(false);
       }
     };
-    
+
     const debounceId = setTimeout(() => {
       fetchIngresos();
     }, 300);
+
     return () => clearTimeout(debounceId);
   }, [search, cadenaFrio, fechaDesde, fechaHasta, page]);
 
@@ -54,7 +55,7 @@ const IngresosPage = () => {
         if (fechaDesde) params.append('fecha_desde', fechaDesde);
         if (fechaHasta) params.append('fecha_hasta', fechaHasta);
       }
-      
+
       const response = await api.get(`/api/export/ingresos?${params.toString()}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -69,57 +70,55 @@ const IngresosPage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)]">Ingresos</h1>
-        <div className="flex gap-2">
-          <button onClick={() => handleExport(true)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
-            Exportar Vista
-          </button>
-          <button onClick={() => handleExport(false)} className="px-4 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50 text-sm cursor-pointer">
-            Exportar Todo
-          </button>
-          <Link to="/ingresos/nuevo" className="px-4 py-2 bg-[var(--color-primary)] text-white rounded font-semibold text-sm hover:opacity-90">
-            + Nuevo Ingreso
-          </Link>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Operacion</p>
+          <h1 className="section-title">Ingresos</h1>
+          <p className="section-subtitle mt-2">Registro de mercaderia recibida con filtros por fecha, proveedor y cadena de frio.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => handleExport(true)} className="toolbar-button cursor-pointer">Exportar vista</button>
+          <button onClick={() => handleExport(false)} className="toolbar-button cursor-pointer">Exportar todo</button>
+          <Link to="/ingresos/nuevo" className="primary-button">Nuevo ingreso</Link>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Buscar (Producto, Lote, NRO de Remito, Proveedor)</label>
-          <input type="text" className="w-full p-2 border rounded outline-none focus:border-[var(--color-primary)]" value={search} onChange={e => {setSearch(e.target.value); setPage(1)}} />
+      <div className="filter-panel flex flex-wrap items-end gap-4 p-4">
+        <div className="min-w-[240px] flex-1">
+          <label className="field-label">Buscar producto, lote, remito o proveedor</label>
+          <input type="text" className="field-input" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Cadena Frío</label>
-          <select className="w-full p-2 border rounded" value={cadenaFrio} onChange={e => {setCadenaFrio(e.target.value); setPage(1)}}>
+          <label className="field-label">Cadena de frio</label>
+          <select className="field-input min-w-[160px]" value={cadenaFrio} onChange={(e) => { setCadenaFrio(e.target.value); setPage(1); }}>
             <option value="">Todos</option>
-            <option value="true">Sí</option>
+            <option value="true">Si</option>
             <option value="false">No</option>
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Desde</label>
-          <input type="date" className="w-full p-2 border rounded outline-none" value={fechaDesde} onChange={e => {setFechaDesde(e.target.value); setPage(1)}} />
+          <label className="field-label">Desde</label>
+          <DateField value={fechaDesde} onChange={(value) => { setFechaDesde(value); setPage(1); }} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Hasta</label>
-          <input type="date" className="w-full p-2 border rounded outline-none" value={fechaHasta} onChange={e => {setFechaHasta(e.target.value); setPage(1)}} />
+          <label className="field-label">Hasta</label>
+          <DateField value={fechaHasta} onChange={(value) => { setFechaHasta(value); setPage(1); }} />
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[800px]">
+      <div className="data-table-wrap">
+        <table className="data-table min-w-[920px]">
           <thead>
-            <tr className="bg-gray-50 text-gray-600 text-sm">
-              <th className="p-3 border-b">Fecha</th>
-              <th className="p-3 border-b">NRO Remito</th>
-              <th className="p-3 border-b">Producto</th>
-              <th className="p-3 border-b">Prov/Lab</th>
-              <th className="p-3 border-b">Lote</th>
-              <th className="p-3 border-b">Vto</th>
-              <th className="p-3 border-b text-center">Frio</th>
-              <th className="p-3 border-b text-right">Cant</th>
-              <th className="p-3 border-b">Acciones</th>
+            <tr>
+              <th>Fecha</th>
+              <th>Nro remito</th>
+              <th>Producto</th>
+              <th>Prov/Lab</th>
+              <th>Lote</th>
+              <th>Vto</th>
+              <th className="text-center">Frio</th>
+              <th className="text-right">Cant.</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -128,22 +127,20 @@ const IngresosPage = () => {
             ) : ingresos.length === 0 ? (
               <tr><td colSpan="9" className="p-4 text-center text-gray-500">No hay registros</td></tr>
             ) : (
-              ingresos.map(i => (
-                <tr key={i.id} className="hover:bg-gray-50 text-sm border-b last:border-0 border-gray-100">
-                  <td className="p-3">{formatDateDisplay(i.fecha_ingreso)}</td>
-                  <td className="p-3">{i.nro_remito || '-'}</td>
-                  <td className="p-3 font-semibold text-[var(--color-primary)]">{i.product?.nombre}</td>
-                  <td className="p-3">
-                    <div className="text-xs font-medium">{i.proveedor_rel?.nombre || i.proveedor}</div>
-                    <div className="text-[10px] text-gray-500">{i.product?.laboratorio}</div>
+              ingresos.map((ingreso) => (
+                <tr key={ingreso.id}>
+                  <td>{formatDateDisplay(ingreso.fecha_ingreso)}</td>
+                  <td>{ingreso.nro_remito || '-'}</td>
+                  <td className="font-semibold text-[var(--color-primary)]">{ingreso.product?.nombre}</td>
+                  <td>
+                    <div className="text-sm font-medium">{ingreso.proveedor_rel?.nombre || ingreso.proveedor}</div>
+                    <div className="text-xs text-gray-500">{ingreso.product?.laboratorio}</div>
                   </td>
-                  <td className="p-3">{i.lote}</td>
-                  <td className="p-3">{formatDateDisplay(i.vencimiento)}</td>
-                  <td className="p-3 text-center">{i.cadena_frio ? '❄️' : '-'}</td>
-                  <td className="p-3 text-right font-bold">{i.cantidad}</td>
-                  <td className="p-3">
-                    <Link to={`/ingresos/${i.id}`} className="text-[var(--color-accent)] hover:underline font-semibold text-xs">Detalle</Link>
-                  </td>
+                  <td>{ingreso.lote}</td>
+                  <td>{formatDateDisplay(ingreso.vencimiento)}</td>
+                  <td className="text-center">{ingreso.cadena_frio ? 'Si' : '-'}</td>
+                  <td className="text-right font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">{ingreso.cantidad}</td>
+                  <td><Link to={`/ingresos/${ingreso.id}`} className="table-link">Detalle</Link></td>
                 </tr>
               ))
             )}
@@ -151,11 +148,11 @@ const IngresosPage = () => {
         </table>
       </div>
 
-      <div className="flex justify-between items-center text-sm text-gray-500">
+      <div className="flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <div>Mostrando {ingresos.length} de {total} registros</div>
         <div className="flex gap-2">
-          <button disabled={page === 1} onClick={()=>setPage(p=>p-1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Anterior</button>
-          <button disabled={ingresos.length < limit} onClick={()=>setPage(p=>p+1)} className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer">Siguiente</button>
+          <button disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="toolbar-button cursor-pointer disabled:opacity-50">Anterior</button>
+          <button disabled={ingresos.length < limit} onClick={() => setPage((prev) => prev + 1)} className="toolbar-button cursor-pointer disabled:opacity-50">Siguiente</button>
         </div>
       </div>
     </div>

@@ -32,7 +32,6 @@ const OrdenCompraDetallePage = () => {
 
   const handlePdf = async () => {
     if (isGeneratingPdf) return;
-
     setIsGeneratingPdf(true);
     try {
       const response = await api.get(`/api/ordenes-compra/${id}/pdf`, { responseType: 'blob' });
@@ -68,61 +67,62 @@ const OrdenCompraDetallePage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Orden de compra {ordenCompra.numero}</h1>
-          <p className="text-sm text-gray-500">Creada el {formatDateDisplay(ordenCompra.fecha)}</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Documento de compra</p>
+          <h1 className="section-title">Orden de compra {ordenCompra.numero}</h1>
+          <p className="section-subtitle mt-2">Creada el {formatDateDisplay(ordenCompra.fecha)}</p>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={handlePdf}
-            disabled={isGeneratingPdf}
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-semibold hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
-          >
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={handlePdf} disabled={isGeneratingPdf} className="toolbar-button disabled:opacity-60">
             {isGeneratingPdf ? 'Generando PDF...' : 'Generar PDF'}
           </button>
-          <Link to={`/ordenes-compra/${id}/editar`} className="rounded border border-gray-300 px-4 py-2 text-sm font-semibold hover:bg-gray-50">
-            Editar
-          </Link>
-          <button type="button" onClick={handleDelete} className="rounded border border-red-200 px-4 py-2 text-sm font-semibold text-[var(--color-action)] hover:bg-red-50">
-            Eliminar
-          </button>
+          <Link to={`/ordenes-compra/${id}/editar`} className="secondary-button">Editar</Link>
+          <button type="button" onClick={handleDelete} className="danger-button">Eliminar</button>
         </div>
       </div>
 
-      <section className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-6 shadow-sm md:grid-cols-2 xl:grid-cols-4">
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Numero</span>{ordenCompra.numero}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Fecha</span>{formatDateDisplay(ordenCompra.fecha)}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Proveedor</span>{ordenCompra.proveedor?.nombre}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Condicion de pago</span>{ordenCompra.condicion_pago}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Numero proveedor</span>{ordenCompra.proveedor?.numero || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Fecha de entrega</span>{ordenCompra.fecha_entrega ? formatDateDisplay(ordenCompra.fecha_entrega) : '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Items</span>{ordenCompra.items_count}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Importe total</span>{formatMoney(ordenCompra.importe_total)}</div>
+      <section className="panel p-6">
+        <div className="mb-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Cabecera</p>
+          <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Datos de la orden</h2>
+        </div>
+        <div className="detail-grid md:grid-cols-2 xl:grid-cols-4">
+          <div className="detail-item"><span className="detail-item-label">Numero</span>{ordenCompra.numero}</div>
+          <div className="detail-item"><span className="detail-item-label">Fecha</span>{formatDateDisplay(ordenCompra.fecha)}</div>
+          <div className="detail-item"><span className="detail-item-label">Proveedor</span>{ordenCompra.proveedor?.nombre}</div>
+          <div className="detail-item"><span className="detail-item-label">Condicion de pago</span>{ordenCompra.condicion_pago}</div>
+          <div className="detail-item"><span className="detail-item-label">Numero proveedor</span>{ordenCompra.proveedor?.numero || '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Fecha de entrega</span>{ordenCompra.fecha_entrega ? formatDateDisplay(ordenCompra.fecha_entrega) : '-'}</div>
+          <div className="detail-item"><span className="detail-item-label">Items</span>{ordenCompra.items_count}</div>
+          <div className="detail-item"><span className="detail-item-label">Importe total</span>{formatMoney(ordenCompra.importe_total)}</div>
+        </div>
       </section>
 
-      <section className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Items</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-[860px] w-full border-collapse text-left">
+      <section className="panel p-6">
+        <div className="mb-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Contenido</p>
+          <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Items</h2>
+        </div>
+        <div className="data-table-wrap !shadow-none">
+          <table className="data-table min-w-[860px]">
             <thead>
-              <tr className="bg-gray-50 text-sm text-gray-600">
-                <th className="border-b p-3">Item</th>
-                <th className="border-b p-3">Producto</th>
-                <th className="border-b p-3">Cantidad</th>
-                <th className="border-b p-3">Precio unitario</th>
-                <th className="border-b p-3">Importe</th>
+              <tr>
+                <th>Item</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Importe</th>
               </tr>
             </thead>
             <tbody>
               {ordenCompra.items.map((item) => (
-                <tr key={item.id} className="border-b border-gray-100 text-sm last:border-b-0">
-                  <td className="p-3 font-semibold">{item.numero_item}</td>
-                  <td className="p-3">{item.producto}</td>
-                  <td className="p-3">{item.cantidad_pedida}</td>
-                  <td className="p-3">{formatMoney(item.precio_unitario)}</td>
-                  <td className="p-3">{formatMoney(item.importe)}</td>
+                <tr key={item.id}>
+                  <td className="font-semibold">{item.numero_item}</td>
+                  <td>{item.producto}</td>
+                  <td>{item.cantidad_pedida}</td>
+                  <td>{formatMoney(item.precio_unitario)}</td>
+                  <td>{formatMoney(item.importe)}</td>
                 </tr>
               ))}
             </tbody>
@@ -131,7 +131,7 @@ const OrdenCompraDetallePage = () => {
       </section>
 
       <div>
-        <Link to="/ordenes-compra" className="text-sm text-gray-500 hover:underline">Volver a ordenes de compra</Link>
+        <Link to="/ordenes-compra" className="ghost-link">Volver a ordenes de compra</Link>
       </div>
     </div>
   );

@@ -56,18 +56,19 @@ const ClientesPage = () => {
 
   return (
     <div className="space-y-6 font-['var(--font-body)']">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Clientes</h1>
-          <p className="text-sm text-gray-500">Establecimientos habilitados, datos de contacto e historial de evaluaciones.</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Comercial</p>
+          <h1 className="section-title">Clientes</h1>
+          <p className="section-subtitle mt-2">Establecimientos habilitados, datos de contacto e historial de evaluaciones.</p>
         </div>
-        <Link to="/clientes/nuevo" className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
-          + Nuevo cliente
+        <Link to="/clientes/nuevo" className="primary-button">
+          Nuevo cliente
         </Link>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-        <label className="mb-1 block text-xs font-medium text-gray-500">Buscar por nombre o establecimiento</label>
+      <div className="filter-panel p-4">
+        <label className="field-label">Buscar por nombre o establecimiento</label>
         <input
           type="text"
           value={search}
@@ -75,20 +76,20 @@ const ClientesPage = () => {
             setSearch(event.target.value);
             setPage(1);
           }}
-          className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]"
+          className="field-input"
         />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-100 bg-white shadow-sm">
-        <table className="min-w-[900px] w-full border-collapse text-left">
+      <div className="data-table-wrap">
+        <table className="data-table min-w-[980px]">
           <thead>
-            <tr className="bg-gray-50 text-sm text-gray-600">
-              <th className="border-b p-3">Establecimiento</th>
-              <th className="border-b p-3">Nombre</th>
-              <th className="border-b p-3">Localidad</th>
-              <th className="border-b p-3">GLN</th>
-              <th className="border-b p-3">Contacto</th>
-              <th className="border-b p-3">Acciones</th>
+            <tr>
+              <th>Establecimiento</th>
+              <th>Nombre</th>
+              <th>Localidad</th>
+              <th>GLN</th>
+              <th>Contacto</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -97,16 +98,16 @@ const ClientesPage = () => {
             ) : clientes.length === 0 ? (
               <tr><td colSpan="6" className="p-4 text-center text-gray-500">No hay clientes cargados.</td></tr>
             ) : clientes.map((cliente) => (
-              <tr key={cliente.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
-                <td className="p-3 font-medium text-[var(--color-primary)]">{cliente.establecimiento}</td>
-                <td className="p-3">{cliente.nombre}</td>
-                <td className="p-3">{cliente.localidad || '-'}</td>
-                <td className="p-3">{cliente.gln || '-'}</td>
-                <td className="p-3">{cliente.contacto || '-'}</td>
-                <td className="p-3">
-                  <div className="flex gap-3 text-xs font-semibold">
-                    <Link to={`/clientes/${cliente.id}`} className="text-[var(--color-accent)] hover:underline">Ver ficha</Link>
-                    <button type="button" onClick={() => handleDelete(cliente.id)} className="text-[var(--color-action)] hover:underline">
+              <tr key={cliente.id}>
+                <td className="font-medium text-[var(--color-primary)]">{cliente.establecimiento}</td>
+                <td>{cliente.nombre}</td>
+                <td>{cliente.localidad || '-'}</td>
+                <td>{cliente.gln || '-'}</td>
+                <td>{cliente.contacto || '-'}</td>
+                <td>
+                  <div className="flex gap-4 text-sm">
+                    <Link to={`/clientes/${cliente.id}`} className="table-link">Ver ficha</Link>
+                    <button type="button" onClick={() => handleDelete(cliente.id)} className="table-danger cursor-pointer">
                       Eliminar
                     </button>
                   </div>
@@ -117,13 +118,13 @@ const ClientesPage = () => {
         </table>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-gray-500">
+      <div className="flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <div>Mostrando {clientes.length} de {total} registros</div>
         <div className="flex gap-2">
-          <button type="button" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="rounded border px-3 py-1 disabled:opacity-50">
+          <button type="button" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)} className="toolbar-button disabled:opacity-50">
             Anterior
           </button>
-          <button type="button" disabled={clientes.length < limit} onClick={() => setPage((prev) => prev + 1)} className="rounded border px-3 py-1 disabled:opacity-50">
+          <button type="button" disabled={clientes.length < limit} onClick={() => setPage((prev) => prev + 1)} className="toolbar-button disabled:opacity-50">
             Siguiente
           </button>
         </div>

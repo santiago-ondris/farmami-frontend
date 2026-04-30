@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
 import AptitudToggleGroup from '../../components/AptitudToggleGroup';
+import DateField from '../../components/DateField';
 import { CAMPOS_EVALUACION_CLIENTE } from '../../lib/fase2';
 import { formatDateInputValue, getTodayDateInputValue } from '../../lib/date';
 
@@ -87,7 +88,7 @@ const ClienteEvaluacionFormPage = () => {
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="mb-1 block text-sm font-medium">Fecha *</label>
-            <input required type="date" value={formData.fecha} onChange={(event) => setFormData((prev) => ({ ...prev, fecha: event.target.value }))} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+            <DateField value={formData.fecha} onChange={(value) => setFormData((prev) => ({ ...prev, fecha: value }))} />
           </div>
           {!isEditing && (
             <p className="text-sm text-gray-500">El numero de evaluacion se generara automaticamente al guardar.</p>

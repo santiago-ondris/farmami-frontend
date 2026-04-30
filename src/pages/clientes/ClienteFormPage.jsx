@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
+import DateField from '../../components/DateField';
 import { handleFormInvalid } from '../../lib/validation';
 import { formatDateInputValue } from '../../lib/date';
 
@@ -89,64 +90,78 @@ const ClienteFormPage = () => {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 font-['var(--font-body)']">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto max-w-5xl space-y-6 font-['var(--font-body)']">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">
-            {isEditing ? 'Editar cliente' : 'Nuevo cliente'}
-          </h1>
-          <p className="text-sm text-gray-500">Datos administrativos, de habilitación y contacto.</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Comercial</p>
+          <h1 className="section-title">{isEditing ? 'Editar cliente' : 'Nuevo cliente'}</h1>
+          <p className="section-subtitle mt-2">Datos administrativos, de habilitacion y contacto.</p>
         </div>
-        <Link to={isEditing ? `/clientes/${id}` : '/clientes'} className="text-sm text-gray-500 hover:underline">
+        <Link to={isEditing ? `/clientes/${id}` : '/clientes'} className="ghost-link">
           Volver
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} onInvalid={handleFormInvalid} className="space-y-6 rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <form onSubmit={handleSubmit} onInvalid={handleFormInvalid} className="form-shell space-y-5 p-6 sm:p-7">
+        <section className="form-section space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">Establecimiento *</label>
-            <input required name="establecimiento" value={formData.establecimiento} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Identificacion</p>
+            <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Datos principales</h2>
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Nombre *</label>
-            <input required name="nombre" value={formData.nombre} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label className="field-label">Establecimiento *</label>
+              <input required name="establecimiento" value={formData.establecimiento} onChange={handleChange} className="field-input" />
+            </div>
+            <div>
+              <label className="field-label">Nombre *</label>
+              <input required name="nombre" value={formData.nombre} onChange={handleChange} className="field-input" />
+            </div>
+            <div>
+              <label className="field-label">Direccion</label>
+              <input name="direccion" value={formData.direccion} onChange={handleChange} className="field-input" />
+            </div>
+            <div>
+              <label className="field-label">Localidad</label>
+              <input name="localidad" value={formData.localidad} onChange={handleChange} className="field-input" />
+            </div>
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Dirección</label>
-            <input name="direccion" value={formData.direccion} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Localidad</label>
-            <input name="localidad" value={formData.localidad} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Dirección técnica</label>
-            <input name="direccion_tecnica" value={formData.direccion_tecnica} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Vigencia de habilitación</label>
-            <input type="date" name="vigencia_habilitacion" value={formData.vigencia_habilitacion} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">GLN</label>
-            <input name="gln" value={formData.gln} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Contacto</label>
-            <input name="contacto" value={formData.contacto} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-          <div className="md:col-span-2">
-            <label className="mb-1 block text-sm font-medium">CUIT</label>
-            <input name="cuit" value={formData.cuit} onChange={handleChange} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
-          </div>
-        </div>
+        </section>
 
-        <div className="flex justify-end gap-2 border-t border-gray-100 pt-4">
-          <Link to={isEditing ? `/clientes/${id}` : '/clientes'} className="rounded border border-gray-300 px-6 py-2 font-semibold hover:bg-gray-50">
+        <section className="form-section space-y-4">
+          <div>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Habilitacion</p>
+            <h2 className="font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Datos regulatorios</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label className="field-label">Direccion tecnica</label>
+              <input name="direccion_tecnica" value={formData.direccion_tecnica} onChange={handleChange} className="field-input" />
+            </div>
+            <div>
+              <label className="field-label">Vigencia de habilitacion</label>
+              <DateField value={formData.vigencia_habilitacion} onChange={(value) => setFormData((prev) => ({ ...prev, vigencia_habilitacion: value }))} />
+            </div>
+            <div>
+              <label className="field-label">GLN</label>
+              <input name="gln" value={formData.gln} onChange={handleChange} className="field-input" />
+            </div>
+            <div>
+              <label className="field-label">CUIT</label>
+              <input name="cuit" value={formData.cuit} onChange={handleChange} className="field-input" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="field-label">Contacto</label>
+              <input name="contacto" value={formData.contacto} onChange={handleChange} className="field-input" />
+            </div>
+          </div>
+        </section>
+
+        <div className="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+          <Link to={isEditing ? `/clientes/${id}` : '/clientes'} className="secondary-button">
             Cancelar
           </Link>
-          <button type="submit" disabled={saving} className="rounded bg-[var(--color-primary)] px-6 py-2 font-semibold text-white disabled:opacity-50">
+          <button type="submit" disabled={saving} className="primary-button disabled:opacity-50">
             {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>

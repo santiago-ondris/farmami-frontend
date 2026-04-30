@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
 import ClienteAutocomplete from '../../components/ClienteAutocomplete';
+import DateField from '../../components/DateField';
 import ProductAutocomplete from '../../components/ProductAutocomplete';
 import StockWarningModal from '../../components/StockWarningModal';
 import { getTodayDateInputValue } from '../../lib/date';
@@ -105,7 +106,7 @@ const RemitoFormPage = () => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-sm font-medium">Fecha *</label>
-            <input type="date" value={formData.fecha} onChange={(event) => setFormData((prev) => ({ ...prev, fecha: event.target.value }))} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+            <DateField value={formData.fecha} onChange={(value) => setFormData((prev) => ({ ...prev, fecha: value }))} />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Hora *</label>
@@ -157,7 +158,7 @@ const RemitoFormPage = () => {
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500">Vencimiento</label>
-                  <input type="date" value={item.vencimiento} onChange={(event) => handleItemChange(index, 'vencimiento', event.target.value)} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+                  <DateField value={item.vencimiento} onChange={(value) => handleItemChange(index, 'vencimiento', value)} />
                 </div>
                 <div className="flex items-end">
                   <button

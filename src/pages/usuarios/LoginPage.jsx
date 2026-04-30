@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { handleFormInvalid } from '../../lib/validation';
+import TermopharmaLogo from '../../components/TermopharmaLogo';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
     try {
       await login(email, password);
       navigate('/dashboard');
@@ -30,41 +32,73 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-100">
-        <h1 className="text-3xl font-bold font-['var(--font-heading)'] text-[var(--color-primary)] mb-6 text-center">
-          Inventario Farmacéutico
-        </h1>
-        {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">{error}</div>}
-        <form onSubmit={handleSubmit} onInvalid={handleFormInvalid} className="space-y-4 font-['var(--font-body)']">
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Email</label>
-            <input
-              type="email"
-              required
-              className="w-full p-2 border border-gray-300 rounded focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+    <div className="min-h-screen bg-[var(--color-bg)] px-4 py-8">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <section className="panel hidden overflow-hidden bg-[var(--color-primary)] text-white lg:flex lg:flex-col lg:justify-between">
+          <div className="px-8 py-8">
+            <div className="max-w-[240px] rounded-[24px] border border-white/10 bg-white/10 p-4">
+              <TermopharmaLogo className="w-full" compact />
+            </div>
+            <p className="mt-8 text-xs font-semibold uppercase tracking-[0.16em] text-white/60">Acceso interno</p>
+            <h1 className="mt-3 font-['var(--font-heading)'] text-5xl font-bold leading-tight">
+              Gestion farmacéutica sobria, clara y trazable.
+            </h1>
+            <p className="mt-5 max-w-xl text-sm leading-6 text-white/80">
+              Panel operativo para controlar movimientos, stock, remitos y documentación sin ruido visual innecesario.
+            </p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Contraseña</label>
-            <input
-              type="password"
-              required
-              className="w-full p-2 border border-gray-300 rounded focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+          <div className="border-t border-white/10 px-8 py-6 text-sm text-white/70">
+            Drogueria Termopharma DGroup
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[var(--color-primary)] text-white py-2.5 rounded font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-4 cursor-pointer"
-          >
-            {loading ? 'Ingresando...' : 'Iniciar Sesión'}
-          </button>
-        </form>
+        </section>
+
+        <section className="panel my-auto w-full max-w-xl justify-self-center p-8 sm:p-10">
+          <div className="mb-8 text-center">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Inicio de sesion</p>
+            <h2 className="font-['var(--font-heading)'] text-4xl font-bold text-[var(--color-primary)]">
+              Inventario Farmaceutico
+            </h2>
+            <p className="mt-3 text-sm text-gray-500">
+              Ingrese con su usuario autorizado para acceder al panel interno.
+            </p>
+          </div>
+
+          {error && (
+            <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} onInvalid={handleFormInvalid} className="space-y-5 font-['var(--font-body)']">
+            <div>
+              <label className="field-label">Email</label>
+              <input
+                type="email"
+                required
+                className="field-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="field-label">Contrasena</label>
+              <input
+                type="password"
+                required
+                className="field-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="primary-button mt-2 w-full disabled:opacity-50"
+            >
+              {loading ? 'Ingresando...' : 'Iniciar sesion'}
+            </button>
+          </form>
+        </section>
       </div>
     </div>
   );

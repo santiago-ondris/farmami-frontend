@@ -36,7 +36,32 @@ import OrdenCompraDetallePage from './pages/ordenes-compra/OrdenCompraDetallePag
 function App() {
   return (
     <AuthProvider>
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            borderRadius: '16px',
+            border: '1px solid #e5e7eb',
+            background: '#ffffff',
+            color: '#1A202C',
+            boxShadow: '0 16px 40px rgba(15, 23, 42, 0.12)',
+            padding: '14px 16px'
+          },
+          success: {
+            iconTheme: {
+              primary: '#38B2AC',
+              secondary: '#ffffff'
+            }
+          },
+          error: {
+            iconTheme: {
+              primary: '#D85A30',
+              secondary: '#ffffff'
+            }
+          }
+        }}
+      />
       <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

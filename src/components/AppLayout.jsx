@@ -1,38 +1,110 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import TermopharmaLogo from './TermopharmaLogo';
+
+const NAV_SECTIONS = [
+  {
+    title: 'Operacion',
+    items: [
+      { to: '/dashboard', label: 'Inicio' },
+      { to: '/productos', label: 'Stock' },
+      { to: '/ingresos', label: 'Ingresos' },
+      { to: '/egresos', label: 'Egresos' }
+    ]
+  },
+  {
+    title: 'Comercial',
+    items: [
+      { to: '/clientes', label: 'Clientes' },
+      { to: '/proveedores', label: 'Proveedores' },
+      { to: '/remitos', label: 'Remitos' },
+      { to: '/ordenes-compra', label: 'Ordenes de compra' }
+    ]
+  },
+  {
+    title: 'Calidad',
+    items: [
+      { to: '/rechazos', label: 'Rechazos' }
+    ]
+  }
+];
 
 const AppLayout = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col md:flex-row">
-      <aside className="w-full md:w-64 bg-[var(--color-primary)] text-white flex flex-col">
-        <div className="p-6 border-b border-white/20">
-          <h2 className="text-xl font-bold font-['var(--font-heading)']">Inventario Farmacéutico</h2>
+    <div className="min-h-screen bg-[var(--color-bg)] md:grid md:grid-cols-[280px_1fr]">
+      <aside className="flex w-full flex-col border-r border-white/10 bg-[var(--color-primary)] text-white shadow-xl">
+        <div className="border-b border-white/15 px-6 py-6">
+          <div className="mb-5 max-w-[170px]">
+            <TermopharmaLogo className="w-full" compact />
+          </div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-white/60">Panel interno</p>
+          <h2 className="font-['var(--font-heading)'] text-2xl font-bold">Inventario Farmaceutico</h2>
+          <p className="mt-2 text-sm text-white/80">
+            Stock, trazabilidad y circuito documental en una sola vista.
+          </p>
         </div>
-        <nav className="flex-1 p-4 space-y-2 font-['var(--font-body)']">
-          <Link to="/dashboard" className="block py-2 px-4 rounded hover:bg-white/10">Inicio</Link>
-          <Link to="/ingresos" className="block py-2 px-4 rounded hover:bg-white/10">Ingresos</Link>
-          <Link to="/egresos" className="block py-2 px-4 rounded hover:bg-white/10">Egresos</Link>
-          <Link to="/productos" className="block py-2 px-4 rounded hover:bg-white/10">Stock</Link>
-          <Link to="/clientes" className="block py-2 px-4 rounded hover:bg-white/10">Clientes</Link>
-          <Link to="/proveedores" className="block py-2 px-4 rounded hover:bg-white/10">Proveedores</Link>
-          <Link to="/rechazos" className="block py-2 px-4 rounded hover:bg-white/10">Rechazos</Link>
-          <Link to="/remitos" className="block py-2 px-4 rounded hover:bg-white/10">Remitos</Link>
-          <Link to="/ordenes-compra" className="block py-2 px-4 rounded hover:bg-white/10">Ordenes de compra</Link>
+
+        <nav className="flex-1 space-y-6 overflow-y-auto px-4 py-5 font-['var(--font-body)']">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.title}>
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
+                {section.title}
+              </p>
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={({ isActive }) => `block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-white text-[var(--color-primary)] shadow-lg'
+                        : 'text-white/80 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          ))}
+
           {user?.role === 'admin' && (
-            <Link to="/admin/usuarios" className="block py-2 px-4 rounded hover:bg-white/10 text-[var(--color-accent)] font-semibold">Usuarios</Link>
+            <div>
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
+                Administracion
+              </p>
+              <NavLink
+                to="/admin/usuarios"
+                className={({ isActive }) => `block rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  isActive
+                    ? 'bg-white text-[var(--color-primary)] shadow-lg'
+                    : 'text-[var(--color-accent)] hover:bg-white/10'
+                }`}
+              >
+                Usuarios
+              </NavLink>
+            </div>
           )}
         </nav>
-        <div className="p-4 border-t border-white/20">
-          <p className="text-sm opacity-80 truncate mb-4">{user?.email}</p>
-          <button onClick={logout} className="w-full bg-[var(--color-action)] text-white py-2 rounded font-semibold hover:opacity-90 cursor-pointer">
-            Cerrar sesión
+
+        <div className="border-t border-white/15 px-4 py-4">
+          <div className="mb-4 rounded-2xl bg-white/10 px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Sesion activa</p>
+            <p className="mt-1 truncate text-sm text-white/80">{user?.email}</p>
+          </div>
+          <button
+            onClick={logout}
+            className="w-full rounded-xl bg-[var(--color-action)] py-2.5 font-semibold text-white hover:opacity-90 cursor-pointer"
+          >
+            Cerrar sesion
           </button>
         </div>
       </aside>
-      <main className="flex-1 p-8 overflow-auto">
+
+      <main className="overflow-auto p-4 sm:p-6 lg:p-8">
         <Outlet />
       </main>
     </div>

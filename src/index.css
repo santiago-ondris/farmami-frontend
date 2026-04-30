@@ -9,3 +9,401 @@
   --font-heading: "Fraunces", serif;
   --font-body: "DM Sans", sans-serif;
 }
+
+:root {
+  --color-primary-soft: #3f4b61;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d7dee8;
+  --color-text-muted: #667085;
+  --shadow-soft: 0 10px 30px rgba(45, 55, 72, 0.06);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.06);
+  --radius-panel: 18px;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(56, 178, 172, 0.08), transparent 28%),
+    linear-gradient(180deg, #f9fafb 0%, var(--color-bg) 100%);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.font-\[\'var\(--font-heading\)\'\] {
+  font-family: var(--font-heading) !important;
+}
+
+.font-\[\'var\(--font-body\)\'\] {
+  font-family: var(--font-body) !important;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-card);
+}
+
+.panel-muted {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+}
+
+.filter-panel {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(215, 222, 232, 0.9);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(8px);
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.section-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem 0.9rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: rgba(56, 178, 172, 0.85);
+  box-shadow: 0 0 0 4px rgba(56, 178, 172, 0.12);
+}
+
+.date-field-wrapper,
+.date-field-wrapper .react-datepicker-wrapper,
+.date-field-wrapper .react-datepicker__input-container {
+  width: 100%;
+}
+
+.date-field-trigger {
+  cursor: pointer;
+}
+
+.date-field-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.date-field-icon {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.app-datepicker-popper {
+  z-index: 60;
+}
+
+.app-datepicker {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.16);
+  font-family: var(--font-body);
+}
+
+.app-datepicker .react-datepicker__triangle {
+  display: none;
+}
+
+.app-datepicker .react-datepicker__header {
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  padding-top: 1rem;
+}
+
+.app-datepicker .react-datepicker__current-month {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.app-datepicker .react-datepicker__navigation {
+  top: 14px;
+}
+
+.app-datepicker .react-datepicker__navigation-icon::before {
+  border-color: var(--color-primary);
+  border-width: 2px 2px 0 0;
+}
+
+.app-datepicker .react-datepicker__day-name {
+  width: 2.2rem;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.app-datepicker .react-datepicker__day {
+  width: 2.2rem;
+  line-height: 2.2rem;
+  border-radius: 999px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.app-datepicker .react-datepicker__day:hover {
+  background: #eef7f6;
+}
+
+.app-datepicker .react-datepicker__day--today {
+  background: #edf2f7;
+  font-weight: 700;
+}
+
+.app-datepicker .react-datepicker__day--selected,
+.app-datepicker .react-datepicker__day--keyboard-selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.app-datepicker .react-datepicker__day--outside-month {
+  color: #c0c8d2;
+}
+
+.app-datepicker .react-datepicker__day--disabled {
+  color: #c9d1da;
+}
+
+.toolbar-button,
+.primary-button,
+.secondary-button,
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease, color 150ms ease, opacity 150ms ease;
+}
+
+.toolbar-button:hover,
+.primary-button:hover,
+.secondary-button:hover,
+.danger-button:hover {
+  transform: translateY(-1px);
+}
+
+.toolbar-button {
+  border: 1px solid var(--color-border-strong);
+  background: #fff;
+  color: var(--color-primary);
+}
+
+.toolbar-button:hover,
+.secondary-button:hover {
+  background: #f8fafc;
+}
+
+.primary-button {
+  border: 1px solid transparent;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(45, 55, 72, 0.18);
+}
+
+.primary-button:hover {
+  background: var(--color-primary-soft);
+}
+
+.secondary-button {
+  border: 1px solid var(--color-border-strong);
+  background: #fff;
+  color: var(--color-primary);
+}
+
+.danger-button {
+  border: 1px solid #fecaca;
+  background: #fff7f5;
+  color: var(--color-action);
+}
+
+.danger-button:hover {
+  background: #fff1ed;
+}
+
+.ghost-link {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ghost-link:hover {
+  color: var(--color-primary);
+}
+
+.data-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow-card);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table thead tr {
+  background: #f8fafc;
+}
+
+.data-table th {
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.9rem 0.95rem;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  border-bottom: 1px solid #eef2f7;
+  padding: 0.95rem;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.data-table tbody tr:hover {
+  background: #fbfcfd;
+}
+
+.table-link {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.table-link-secondary {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.table-danger {
+  color: var(--color-action);
+  font-weight: 700;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.detail-item {
+  border-radius: 14px;
+  background: #fbfcfd;
+  padding: 0.9rem 1rem;
+}
+
+.detail-item-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.form-shell {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.form-section {
+  border: 1px solid #edf2f7;
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.65);
+  padding: 1.2rem;
+}
+
+.checkbox-card {
+  border: 1px solid #e6ecf2;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.95rem 1rem;
+  transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
+}
+
+.checkbox-card:hover {
+  transform: translateY(-1px);
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

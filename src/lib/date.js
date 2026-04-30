@@ -31,6 +31,14 @@ export function formatDateInputValue(value) {
   return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())}`;
 }
 
+export function parseDateInputValue(value) {
+  const datePart = formatDateInputValue(value);
+  if (!datePart) return null;
+
+  const [year, month, day] = datePart.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export function formatDateDisplay(value) {
   const datePart = formatDateInputValue(value);
   if (!datePart) return '-';

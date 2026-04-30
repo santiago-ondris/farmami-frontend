@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
+import DateField from '../../components/DateField';
 import { formatDateDisplay } from '../../lib/date';
 
 const RechazosPage = () => {
@@ -58,11 +59,11 @@ const RechazosPage = () => {
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-500">Desde</label>
-          <input type="date" value={fechaDesde} onChange={(event) => { setFechaDesde(event.target.value); setPage(1); }} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+          <DateField value={fechaDesde} onChange={(value) => { setFechaDesde(value); setPage(1); }} />
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-500">Hasta</label>
-          <input type="date" value={fechaHasta} onChange={(event) => { setFechaHasta(event.target.value); setPage(1); }} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+          <DateField value={fechaHasta} onChange={(value) => { setFechaHasta(value); setPage(1); }} />
         </div>
       </div>
 
