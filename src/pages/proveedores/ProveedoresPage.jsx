@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { TIPOS_PROVEEDOR } from '../lib/fase2';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { TIPOS_PROVEEDOR } from '../../lib/fase2';
+import { confirmToast } from '../../lib/confirmToast';
 
 const ProveedoresPage = () => {
   const [proveedores, setProveedores] = useState([]);

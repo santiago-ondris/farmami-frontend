@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
+import api from '../../lib/axios';
+import { formatDateDisplay } from '../../lib/date';
 
 const IngresosPage = () => {
   const [ingresos, setIngresos] = useState([]);
@@ -129,7 +130,7 @@ const IngresosPage = () => {
             ) : (
               ingresos.map(i => (
                 <tr key={i.id} className="hover:bg-gray-50 text-sm border-b last:border-0 border-gray-100">
-                  <td className="p-3">{new Date(i.fecha_ingreso).toLocaleDateString('es-AR')}</td>
+                  <td className="p-3">{formatDateDisplay(i.fecha_ingreso)}</td>
                   <td className="p-3">{i.nro_remito || '-'}</td>
                   <td className="p-3 font-semibold text-[var(--color-primary)]">{i.product?.nombre}</td>
                   <td className="p-3">
@@ -137,7 +138,7 @@ const IngresosPage = () => {
                     <div className="text-[10px] text-gray-500">{i.product?.laboratorio}</div>
                   </td>
                   <td className="p-3">{i.lote}</td>
-                  <td className="p-3">{new Date(i.vencimiento).toLocaleDateString('es-AR')}</td>
+                  <td className="p-3">{formatDateDisplay(i.vencimiento)}</td>
                   <td className="p-3 text-center">{i.cadena_frio ? '❄️' : '-'}</td>
                   <td className="p-3 text-right font-bold">{i.cantidad}</td>
                   <td className="p-3">

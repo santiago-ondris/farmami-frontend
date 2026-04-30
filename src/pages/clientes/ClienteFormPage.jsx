@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import { formatDateInputValue } from '../../lib/date';
 
 const EMPTY_FORM = {
   establecimiento: '',
@@ -36,7 +37,7 @@ const ClienteFormPage = () => {
           direccion: data.direccion || '',
           localidad: data.localidad || '',
           direccion_tecnica: data.direccion_tecnica || '',
-          vigencia_habilitacion: data.vigencia_habilitacion ? data.vigencia_habilitacion.split('T')[0] : '',
+          vigencia_habilitacion: formatDateInputValue(data.vigencia_habilitacion),
           gln: data.gln || '',
           contacto: data.contacto || '',
           cuit: data.cuit || ''
@@ -64,7 +65,7 @@ const ClienteFormPage = () => {
     try {
       const payload = {
         ...formData,
-        vigencia_habilitacion: formData.vigencia_habilitacion ? new Date(formData.vigencia_habilitacion).toISOString() : null
+        vigencia_habilitacion: formData.vigencia_habilitacion || null
       };
 
       if (isEditing) {

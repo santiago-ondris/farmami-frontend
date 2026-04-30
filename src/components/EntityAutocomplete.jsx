@@ -12,7 +12,8 @@ const EntityAutocomplete = ({
   getOptionDescription,
   getOptionKey = (option) => option.id,
   emptyMessage = 'No se encontraron resultados.',
-  error = false
+  error = false,
+  renderEmpty
 }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
@@ -98,7 +99,7 @@ const EntityAutocomplete = ({
           {isLoading ? (
             <div className="p-3 text-sm text-gray-500">Buscando...</div>
           ) : results.length === 0 ? (
-            <div className="p-3 text-sm text-gray-500">{emptyMessage}</div>
+            renderEmpty ? renderEmpty({ query }) : <div className="p-3 text-sm text-gray-500">{emptyMessage}</div>
           ) : (
             results.map((option) => (
               <button

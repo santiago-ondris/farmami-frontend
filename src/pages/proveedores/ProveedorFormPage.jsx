@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
-import { TIPOS_PROVEEDOR } from '../lib/fase2';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import { TIPOS_PROVEEDOR } from '../../lib/fase2';
 
 const BOOLEAN_FIELDS = [
   ['habilitacion_jurisdiccion_provincial', 'Habilitacion jurisdiccion provincial'],

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
+import api from '../../lib/axios';
+import { formatDateDisplay } from '../../lib/date';
 
 const RemitosPage = () => {
   const [remitos, setRemitos] = useState([]);
@@ -85,7 +86,7 @@ const RemitosPage = () => {
             ) : remitos.map((remito) => (
               <tr key={remito.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
                 <td className="p-3 font-semibold text-[var(--color-primary)]">{remito.numero}</td>
-                <td className="p-3">{new Date(remito.fecha).toLocaleDateString('es-AR')}</td>
+                <td className="p-3">{formatDateDisplay(remito.fecha)}</td>
                 <td className="p-3">{remito.cliente?.nombre}</td>
                 <td className="p-3">
                   <span className={`rounded-full px-3 py-1 text-xs font-bold ${remito.estado === 'Entregado' ? 'bg-green-100 text-green-700' : remito.estado === 'Cancelado' ? 'bg-gray-200 text-gray-700' : 'bg-amber-100 text-amber-700'}`}>

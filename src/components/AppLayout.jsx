@@ -20,6 +20,7 @@ const AppLayout = () => {
           <Link to="/proveedores" className="block py-2 px-4 rounded hover:bg-white/10">Proveedores</Link>
           <Link to="/rechazos" className="block py-2 px-4 rounded hover:bg-white/10">Rechazos</Link>
           <Link to="/remitos" className="block py-2 px-4 rounded hover:bg-white/10">Remitos</Link>
+          <Link to="/ordenes-compra" className="block py-2 px-4 rounded hover:bg-white/10">Ordenes de compra</Link>
           {user?.role === 'admin' && (
             <Link to="/admin/usuarios" className="block py-2 px-4 rounded hover:bg-white/10 text-[var(--color-accent)] font-semibold">Usuarios</Link>
           )}

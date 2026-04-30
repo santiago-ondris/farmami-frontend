@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import { confirmToast } from '../../lib/confirmToast';
+import { formatDateDisplay, formatDateInputValue } from '../../lib/date';
 
 const DetalleEgresoPage = () => {
   const { id } = useParams();
@@ -24,10 +25,10 @@ const DetalleEgresoPage = () => {
       setEgreso(data);
       setFormData({
         lote: data.lote,
-        fecha_entrega: data.fecha_entrega.split('T')[0],
+        fecha_entrega: formatDateInputValue(data.fecha_entrega),
         cantidad: data.cantidad,
         empresa_solicitante: data.empresa_solicitante,
-        vencimiento: data.vencimiento.split('T')[0],
+        vencimiento: formatDateInputValue(data.vencimiento),
         serial: data.serial || '',
         orden_compra: data.orden_compra || '',
         estado_remito: data.estado_remito
@@ -51,8 +52,8 @@ const DetalleEgresoPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha_entrega: new Date(formData.fecha_entrega).toISOString(),
-        vencimiento: new Date(formData.vencimiento).toISOString(),
+        fecha_entrega: formData.fecha_entrega,
+        vencimiento: formData.vencimiento,
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.patch(`/api/egresos/${id}`, payload);
@@ -113,11 +114,11 @@ const DetalleEgresoPage = () => {
         {!isEditing ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
             <div><span className="block text-xs text-gray-500 font-bold uppercase">ID Registro</span>{egreso.id}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Fecha de Entrega</span>{new Date(egreso.fecha_entrega).toLocaleDateString('es-AR')}</div>
+            <div><span className="block text-xs text-gray-500 font-bold uppercase">Fecha de Entrega</span>{formatDateDisplay(egreso.fecha_entrega)}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Cantidad</span><span className="font-bold text-[var(--color-action)] text-lg">{egreso.cantidad}</span></div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Empresa Solicitante</span>{egreso.empresa_solicitante}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Lote</span>{egreso.lote}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Vencimiento Lote</span>{new Date(egreso.vencimiento).toLocaleDateString('es-AR')}</div>
+            <div><span className="block text-xs text-gray-500 font-bold uppercase">Vencimiento Lote</span>{formatDateDisplay(egreso.vencimiento)}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Serial</span>{egreso.serial || '-'}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Orden de Compra</span>{egreso.orden_compra || '-'}</div>
 

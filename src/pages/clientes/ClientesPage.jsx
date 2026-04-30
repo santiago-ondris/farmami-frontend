@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { confirmToast } from '../../lib/confirmToast';
 
 const ClientesPage = () => {
   const [clientes, setClientes] = useState([]);

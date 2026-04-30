@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import { confirmToast } from '../../lib/confirmToast';
 
 const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState([]);

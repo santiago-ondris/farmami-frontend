@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
+import api from '../../lib/axios';
+import { formatDateDisplay } from '../../lib/date';
 
 const EgresosPage = () => {
   const [egresos, setEgresos] = useState([]);
@@ -122,7 +123,7 @@ const EgresosPage = () => {
             ) : (
               egresos.map(e => (
                 <tr key={e.id} className={`hover:bg-gray-50 text-sm border-b last:border-0 border-gray-100 ${e.estado_remito === 'Cancelado' ? 'opacity-60' : ''}`}>
-                  <td className="p-3">{new Date(e.fecha_entrega).toLocaleDateString('es-AR')}</td>
+                  <td className="p-3">{formatDateDisplay(e.fecha_entrega)}</td>
                   <td className="p-3">
                     <div className="font-semibold text-[var(--color-primary)]">{e.product?.nombre}</div>
                     <div className="text-xs">Lote: {e.lote}</div>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { confirmToast } from '../../lib/confirmToast';
+import { formatDateDisplay } from '../../lib/date';
 
 const RemitoDetallePage = () => {
   const { id } = useParams();
@@ -83,7 +84,7 @@ const RemitoDetallePage = () => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-['var(--font-heading)'] text-3xl font-bold text-[var(--color-primary)]">Remito {remito.numero}</h1>
-          <p className="text-sm text-gray-500">Emitido el {new Date(remito.fecha).toLocaleDateString('es-AR')} a las {remito.hora}</p>
+          <p className="text-sm text-gray-500">Emitido el {formatDateDisplay(remito.fecha)} a las {remito.hora}</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -135,7 +136,7 @@ const RemitoDetallePage = () => {
                   <td className="p-3 font-semibold">{item.cantidad}</td>
                   <td className="p-3">{item.descripcion}</td>
                   <td className="p-3">{item.lote}</td>
-                  <td className="p-3">{new Date(item.vencimiento).toLocaleDateString('es-AR')}</td>
+                  <td className="p-3">{formatDateDisplay(item.vencimiento)}</td>
                   <td className="p-3">
                     {item.egresos?.[0] ? (
                       <Link to={`/egresos/${item.egresos[0].id}`} className="text-xs font-semibold text-[var(--color-accent)] hover:underline">

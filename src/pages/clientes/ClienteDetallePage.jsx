@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { CAMPOS_EVALUACION_CLIENTE, getEvaluacionResult } from '../lib/fase2';
+import api from '../../lib/axios';
+import { CAMPOS_EVALUACION_CLIENTE, getEvaluacionResult } from '../../lib/fase2';
+import { formatDateDisplay } from '../../lib/date';
 
 const ClienteDetallePage = () => {
   const { id } = useParams();
@@ -57,7 +58,7 @@ const ClienteDetallePage = () => {
         <div><span className="block text-xs font-bold uppercase text-gray-500">Dirección</span>{cliente.direccion || '-'}</div>
         <div><span className="block text-xs font-bold uppercase text-gray-500">Localidad</span>{cliente.localidad || '-'}</div>
         <div><span className="block text-xs font-bold uppercase text-gray-500">Dirección técnica</span>{cliente.direccion_tecnica || '-'}</div>
-        <div><span className="block text-xs font-bold uppercase text-gray-500">Vigencia habilitación</span>{cliente.vigencia_habilitacion ? new Date(cliente.vigencia_habilitacion).toLocaleDateString('es-AR') : '-'}</div>
+        <div><span className="block text-xs font-bold uppercase text-gray-500">Vigencia habilitación</span>{cliente.vigencia_habilitacion ? formatDateDisplay(cliente.vigencia_habilitacion) : '-'}</div>
         <div><span className="block text-xs font-bold uppercase text-gray-500">GLN</span>{cliente.gln || '-'}</div>
         <div><span className="block text-xs font-bold uppercase text-gray-500">Contacto</span>{cliente.contacto || '-'}</div>
         <div><span className="block text-xs font-bold uppercase text-gray-500">CUIT</span>{cliente.cuit || '-'}</div>
@@ -86,7 +87,7 @@ const ClienteDetallePage = () => {
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <div className="font-semibold text-[var(--color-primary)]">{evaluacion.numero_evaluacion}</div>
-                        <div className="text-xs text-gray-500">{new Date(evaluacion.fecha).toLocaleDateString('es-AR')}</div>
+                        <div className="text-xs text-gray-500">{formatDateDisplay(evaluacion.fecha)}</div>
                       </div>
                       <span className={`rounded-full px-3 py-1 text-xs font-bold ${result === 'APTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                         {result}
@@ -108,7 +109,7 @@ const ClienteDetallePage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-semibold text-[var(--color-primary)]">{selectedEvaluation.numero_evaluacion}</div>
-                  <div className="text-sm text-gray-500">{new Date(selectedEvaluation.fecha).toLocaleDateString('es-AR')}</div>
+                  <div className="text-sm text-gray-500">{formatDateDisplay(selectedEvaluation.fecha)}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`rounded-full px-3 py-1 text-xs font-bold ${getEvaluacionResult(selectedEvaluation, CAMPOS_EVALUACION_CLIENTE) === 'APTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>

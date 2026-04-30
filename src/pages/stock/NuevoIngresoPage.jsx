@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
-import ProductAutocomplete from '../components/ProductAutocomplete';
-import ProveedorAutocomplete from '../components/ProveedorAutocomplete';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import ProductAutocomplete from '../../components/ProductAutocomplete';
+import ProveedorAutocomplete from '../../components/ProveedorAutocomplete';
+import { getTodayDateInputValue } from '../../lib/date';
 
 const NuevoIngresoPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     product_id: '',
-    fecha_ingreso: new Date().toISOString().split('T')[0],
+    fecha_ingreso: getTodayDateInputValue(),
     nro_remito: '',
     lote: '',
     vencimiento: '',
@@ -43,8 +44,8 @@ const NuevoIngresoPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha_ingreso: new Date(formData.fecha_ingreso).toISOString(),
-        vencimiento: new Date(formData.vencimiento).toISOString(),
+        fecha_ingreso: formData.fecha_ingreso,
+        vencimiento: formData.vencimiento,
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.post('/api/ingresos', payload);

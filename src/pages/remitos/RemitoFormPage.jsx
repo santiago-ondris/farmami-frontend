@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import ClienteAutocomplete from '../components/ClienteAutocomplete';
-import ProductAutocomplete from '../components/ProductAutocomplete';
-import StockWarningModal from '../components/StockWarningModal';
+import api from '../../lib/axios';
+import ClienteAutocomplete from '../../components/ClienteAutocomplete';
+import ProductAutocomplete from '../../components/ProductAutocomplete';
+import StockWarningModal from '../../components/StockWarningModal';
+import { getTodayDateInputValue } from '../../lib/date';
 
 const createEmptyItem = () => ({
   product_id: '',
@@ -20,7 +21,7 @@ const RemitoFormPage = () => {
   const [showWarnings, setShowWarnings] = useState(false);
   const [warningItems, setWarningItems] = useState([]);
   const [formData, setFormData] = useState({
-    fecha: new Date().toISOString().split('T')[0],
+    fecha: getTodayDateInputValue(),
     hora: '12:00',
     cliente_id: '',
     estado: 'Pendiente',
@@ -66,12 +67,12 @@ const RemitoFormPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha: new Date(formData.fecha).toISOString(),
+        fecha: formData.fecha,
         force,
         items: formData.items.map((item) => ({
           ...item,
           cantidad: parseInt(item.cantidad, 10),
-          vencimiento: new Date(item.vencimiento).toISOString()
+          vencimiento: item.vencimiento
         }))
       };
 

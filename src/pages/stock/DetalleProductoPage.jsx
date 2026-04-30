@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../lib/axios';
+import api from '../../lib/axios';
+import { formatDateDisplay } from '../../lib/date';
 
 const DetalleProductoPage = () => {
   const { id } = useParams();
@@ -73,7 +74,7 @@ const DetalleProductoPage = () => {
                     </div>
                     <div>
                       <div className="font-bold text-gray-800">{mov.tipo === 'INGRESO' ? 'Ingreso de mercadería' : 'Egreso de mercadería'}</div>
-                      <div className="text-sm text-gray-500">{new Date(mov.fecha).toLocaleDateString('es-AR')}</div>
+                      <div className="text-sm text-gray-500">{formatDateDisplay(mov.fecha)}</div>
                       {mov.tipo === 'EGRESO' && mov.estado_remito && (
                         <div className="text-xs mt-1 text-gray-400">Estado: {mov.estado_remito}</div>
                       )}

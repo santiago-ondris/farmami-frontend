@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
-import ProveedorAutocomplete from '../components/ProveedorAutocomplete';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import ProveedorAutocomplete from '../../components/ProveedorAutocomplete';
+import { confirmToast } from '../../lib/confirmToast';
+import { formatDateDisplay, formatDateInputValue } from '../../lib/date';
 
 const DetalleIngresoPage = () => {
   const { id } = useParams();
@@ -27,8 +28,8 @@ const DetalleIngresoPage = () => {
         nro_remito: data.nro_remito || '',
         lote: data.lote,
         proveedor_id: data.proveedor_id,
-        fecha_ingreso: data.fecha_ingreso.split('T')[0],
-        vencimiento: data.vencimiento.split('T')[0],
+        fecha_ingreso: formatDateInputValue(data.fecha_ingreso),
+        vencimiento: formatDateInputValue(data.vencimiento),
         cadena_frio: data.cadena_frio,
         cantidad: data.cantidad,
         observaciones: data.observaciones || ''
@@ -56,8 +57,8 @@ const DetalleIngresoPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha_ingreso: new Date(formData.fecha_ingreso).toISOString(),
-        vencimiento: new Date(formData.vencimiento).toISOString(),
+        fecha_ingreso: formData.fecha_ingreso,
+        vencimiento: formData.vencimiento,
         cantidad: parseInt(formData.cantidad, 10)
       };
       await api.patch(`/api/ingresos/${id}`, payload);
@@ -110,10 +111,10 @@ const DetalleIngresoPage = () => {
         {!isEditing ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
             <div><span className="block text-xs text-gray-500 font-bold uppercase">ID Registro</span>{ingreso.id}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Fecha de Ingreso</span>{new Date(ingreso.fecha_ingreso).toLocaleDateString('es-AR')}</div>
+            <div><span className="block text-xs text-gray-500 font-bold uppercase">Fecha de Ingreso</span>{formatDateDisplay(ingreso.fecha_ingreso)}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">NRO de Remito</span>{ingreso.nro_remito || '-'}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Lote</span>{ingreso.lote}</div>
-            <div><span className="block text-xs text-gray-500 font-bold uppercase">Vencimiento</span>{new Date(ingreso.vencimiento).toLocaleDateString('es-AR')}</div>
+            <div><span className="block text-xs text-gray-500 font-bold uppercase">Vencimiento</span>{formatDateDisplay(ingreso.vencimiento)}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Proveedor</span>{ingreso.proveedor_rel?.nombre || ingreso.proveedor}</div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Cantidad</span><span className="font-bold text-[var(--color-primary)] text-lg">{ingreso.cantidad}</span></div>
             <div><span className="block text-xs text-gray-500 font-bold uppercase">Cadena Frio</span>{ingreso.cadena_frio ? 'Si' : 'No'}</div>

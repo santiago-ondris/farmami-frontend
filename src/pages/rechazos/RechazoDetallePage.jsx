@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { confirmToast } from '../lib/confirmToast';
+import api from '../../lib/axios';
+import { confirmToast } from '../../lib/confirmToast';
+import { formatDateDisplay } from '../../lib/date';
 
 const RechazoDetallePage = () => {
   const { id } = useParams();
@@ -58,7 +59,7 @@ const RechazoDetallePage = () => {
 
       <div className="space-y-6 rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div><span className="block text-xs font-bold uppercase text-gray-500">Fecha</span>{new Date(rechazo.fecha).toLocaleDateString('es-AR')}</div>
+          <div><span className="block text-xs font-bold uppercase text-gray-500">Fecha</span>{formatDateDisplay(rechazo.fecha)}</div>
           <div><span className="block text-xs font-bold uppercase text-gray-500">Cantidad</span>{rechazo.cantidad}</div>
           <div><span className="block text-xs font-bold uppercase text-gray-500">Producto</span>{rechazo.product?.nombre || '-'}</div>
           <div><span className="block text-xs font-bold uppercase text-gray-500">Proveedor</span>{rechazo.proveedor?.nombre || '-'}</div>

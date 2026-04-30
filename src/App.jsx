@@ -3,32 +3,35 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './components/AppLayout.jsx';
-import LoginPage from './pages/LoginPage.jsx';
+import LoginPage from './pages/usuarios/LoginPage.jsx';
 import HomePage from './pages/HomePage.jsx';
-import IngresosPage from './pages/IngresosPage.jsx';
-import NuevoIngresoPage from './pages/NuevoIngresoPage.jsx';
-import DetalleIngresoPage from './pages/DetalleIngresoPage.jsx';
-import EgresosPage from './pages/EgresosPage.jsx';
-import NuevoEgresoPage from './pages/NuevoEgresoPage.jsx';
-import DetalleEgresoPage from './pages/DetalleEgresoPage.jsx';
-import ProductosPage from './pages/ProductosPage.jsx';
-import DetalleProductoPage from './pages/DetalleProductoPage.jsx';
+import IngresosPage from './pages/stock/IngresosPage.jsx';
+import NuevoIngresoPage from './pages/stock/NuevoIngresoPage.jsx';
+import DetalleIngresoPage from './pages/stock/DetalleIngresoPage.jsx';
+import EgresosPage from './pages/stock/EgresosPage.jsx';
+import NuevoEgresoPage from './pages/stock/NuevoEgresoPage.jsx';
+import DetalleEgresoPage from './pages/stock/DetalleEgresoPage.jsx';
+import ProductosPage from './pages/stock/ProductosPage.jsx';
+import DetalleProductoPage from './pages/stock/DetalleProductoPage.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
-import UsuariosPage from './pages/UsuariosPage.jsx';
-import ClientesPage from './pages/ClientesPage.jsx';
-import ClienteFormPage from './pages/ClienteFormPage.jsx';
-import ClienteDetallePage from './pages/ClienteDetallePage.jsx';
-import ClienteEvaluacionFormPage from './pages/ClienteEvaluacionFormPage.jsx';
-import ProveedoresPage from './pages/ProveedoresPage.jsx';
-import ProveedorFormPage from './pages/ProveedorFormPage.jsx';
-import ProveedorDetallePage from './pages/ProveedorDetallePage.jsx';
-import ProveedorEvaluacionFormPage from './pages/ProveedorEvaluacionFormPage.jsx';
-import RechazosPage from './pages/RechazosPage.jsx';
-import RechazoFormPage from './pages/RechazoFormPage.jsx';
-import RechazoDetallePage from './pages/RechazoDetallePage.jsx';
-import RemitosPage from './pages/RemitosPage.jsx';
-import RemitoFormPage from './pages/RemitoFormPage.jsx';
-import RemitoDetallePage from './pages/RemitoDetallePage.jsx';
+import UsuariosPage from './pages/usuarios/UsuariosPage.jsx';
+import ClientesPage from './pages/clientes/ClientesPage.jsx';
+import ClienteFormPage from './pages/clientes/ClienteFormPage.jsx';
+import ClienteDetallePage from './pages/clientes/ClienteDetallePage.jsx';
+import ClienteEvaluacionFormPage from './pages/clientes/ClienteEvaluacionFormPage.jsx';
+import ProveedoresPage from './pages/proveedores/ProveedoresPage.jsx';
+import ProveedorFormPage from './pages/proveedores/ProveedorFormPage.jsx';
+import ProveedorDetallePage from './pages/proveedores/ProveedorDetallePage.jsx';
+import ProveedorEvaluacionFormPage from './pages/proveedores/ProveedorEvaluacionFormPage.jsx';
+import RechazosPage from './pages/rechazos/RechazosPage.jsx';
+import RechazoFormPage from './pages/rechazos/RechazoFormPage.jsx';
+import RechazoDetallePage from './pages/rechazos/RechazoDetallePage.jsx';
+import RemitosPage from './pages/remitos/RemitosPage.jsx';
+import RemitoFormPage from './pages/remitos/RemitoFormPage.jsx';
+import RemitoDetallePage from './pages/remitos/RemitoDetallePage.jsx';
+import OrdenesCompraPage from './pages/ordenes-compra/OrdenesCompraPage.jsx';
+import OrdenCompraFormPage from './pages/ordenes-compra/OrdenCompraFormPage.jsx';
+import OrdenCompraDetallePage from './pages/ordenes-compra/OrdenCompraDetallePage.jsx';
 
 function App() {
   return (
@@ -67,6 +70,10 @@ function App() {
             <Route path="/remitos" element={<RemitosPage />} />
             <Route path="/remitos/nuevo" element={<RemitoFormPage />} />
             <Route path="/remitos/:id" element={<RemitoDetallePage />} />
+            <Route path="/ordenes-compra" element={<OrdenesCompraPage />} />
+            <Route path="/ordenes-compra/nuevo" element={<OrdenCompraFormPage />} />
+            <Route path="/ordenes-compra/:id" element={<OrdenCompraDetallePage />} />
+            <Route path="/ordenes-compra/:id/editar" element={<OrdenCompraFormPage />} />
             <Route path="/admin/usuarios" element={
               <AdminRoute><UsuariosPage /></AdminRoute>
             } />

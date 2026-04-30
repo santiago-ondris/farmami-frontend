@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
+import api from '../../lib/axios';
+import { formatDateDisplay } from '../../lib/date';
 
 const RechazosPage = () => {
   const [rechazos, setRechazos] = useState([]);
@@ -86,7 +87,7 @@ const RechazosPage = () => {
               <tr><td colSpan="8" className="p-4 text-center text-gray-500">No hay rechazos cargados.</td></tr>
             ) : rechazos.map((rechazo) => (
               <tr key={rechazo.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
-                <td className="p-3">{new Date(rechazo.fecha).toLocaleDateString('es-AR')}</td>
+                <td className="p-3">{formatDateDisplay(rechazo.fecha)}</td>
                 <td className="p-3 font-medium text-[var(--color-primary)]">{rechazo.product?.nombre}</td>
                 <td className="p-3">{rechazo.lote}</td>
                 <td className="p-3">{rechazo.motivo_rechazo}</td>

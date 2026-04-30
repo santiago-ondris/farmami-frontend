@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import ProductAutocomplete from '../components/ProductAutocomplete';
-import ProveedorAutocomplete from '../components/ProveedorAutocomplete';
-import { handleFormInvalid } from '../lib/validation';
+import api from '../../lib/axios';
+import ProductAutocomplete from '../../components/ProductAutocomplete';
+import ProveedorAutocomplete from '../../components/ProveedorAutocomplete';
+import { handleFormInvalid } from '../../lib/validation';
+import { formatDateInputValue, getTodayDateInputValue } from '../../lib/date';
 
 const EMPTY_FORM = {
-  fecha: new Date().toISOString().split('T')[0],
+  fecha: getTodayDateInputValue(),
   product_id: '',
   lote: '',
   motivo_rechazo: '',
@@ -31,7 +32,7 @@ const RechazoFormPage = () => {
       try {
         const { data } = await api.get(`/api/rechazos/${id}`);
         setFormData({
-          fecha: data.fecha.split('T')[0],
+          fecha: formatDateInputValue(data.fecha),
           product_id: data.product_id,
           lote: data.lote,
           motivo_rechazo: data.motivo_rechazo,
@@ -66,7 +67,7 @@ const RechazoFormPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha: new Date(formData.fecha).toISOString(),
+        fecha: formData.fecha,
         cantidad: parseInt(formData.cantidad, 10)
       };
 

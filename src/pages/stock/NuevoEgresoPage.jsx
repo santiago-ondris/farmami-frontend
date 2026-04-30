@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import { handleFormInvalid } from '../lib/validation';
-import ProductAutocomplete from '../components/ProductAutocomplete';
+import api from '../../lib/axios';
+import { handleFormInvalid } from '../../lib/validation';
+import ProductAutocomplete from '../../components/ProductAutocomplete';
+import { getTodayDateInputValue } from '../../lib/date';
 
 const NuevoEgresoPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     product_id: '',
-    fecha_entrega: new Date().toISOString().split('T')[0],
+    fecha_entrega: getTodayDateInputValue(),
     cantidad: '',
     empresa_solicitante: '',
     lote: '',
@@ -72,8 +73,8 @@ const NuevoEgresoPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha_entrega: new Date(formData.fecha_entrega).toISOString(),
-        vencimiento: new Date(formData.vencimiento).toISOString(),
+        fecha_entrega: formData.fecha_entrega,
+        vencimiento: formData.vencimiento,
         cantidad: parseInt(formData.cantidad, 10),
         confirm_negative: confirmNegative
       };

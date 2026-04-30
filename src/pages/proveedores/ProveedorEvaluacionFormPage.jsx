@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../lib/axios';
-import AptitudToggleGroup from '../components/AptitudToggleGroup';
-import { CAMPOS_EVALUACION_PROVEEDOR } from '../lib/fase2';
+import api from '../../lib/axios';
+import AptitudToggleGroup from '../../components/AptitudToggleGroup';
+import { CAMPOS_EVALUACION_PROVEEDOR } from '../../lib/fase2';
+import { formatDateInputValue, getTodayDateInputValue } from '../../lib/date';
 
 const buildInitialState = () => CAMPOS_EVALUACION_PROVEEDOR.reduce((acc, [key]) => {
   acc[key] = 'APTO';
   return acc;
 }, {
-  fecha: new Date().toISOString().split('T')[0]
+  fecha: getTodayDateInputValue()
 });
 
 const ProveedorEvaluacionFormPage = () => {
@@ -29,7 +30,7 @@ const ProveedorEvaluacionFormPage = () => {
         setFormData({
           ...buildInitialState(),
           ...data,
-          fecha: data.fecha.split('T')[0]
+          fecha: formatDateInputValue(data.fecha)
         });
       } catch (error) {
         toast.error('No se pudo cargar la evaluacion');
@@ -49,7 +50,7 @@ const ProveedorEvaluacionFormPage = () => {
     try {
       const payload = {
         ...formData,
-        fecha: new Date(formData.fecha).toISOString()
+        fecha: formData.fecha
       };
 
       if (isEditing) {
