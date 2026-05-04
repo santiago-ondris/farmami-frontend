@@ -30,7 +30,9 @@ const OrdenCompraItemsEditor = ({ items, onAddItem, onChangeItem, onRemoveItem, 
       <div className="flex justify-end border-t border-gray-100 pt-4">
         <div className="rounded-lg bg-gray-50 px-5 py-4 text-right">
           <div className="text-xs font-bold uppercase text-gray-500">Importe total</div>
-          <div className="text-2xl font-bold text-[var(--color-primary)]">{importeTotal.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-[var(--color-primary)]">
+            {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(importeTotal)}
+          </div>
         </div>
       </div>
     </section>

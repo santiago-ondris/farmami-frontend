@@ -1,7 +1,8 @@
 import React from 'react';
 
 const OrdenCompraItemRow = ({ index, item, canRemove, onChange, onRemove }) => {
-  const importe = (Number(item.cantidad_pedida || 0) * Number(item.precio_unitario || 0)).toFixed(2);
+  const rawImporte = Number(item.cantidad_pedida || 0) * Number(item.precio_unitario || 0);
+  const importe = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(rawImporte);
 
   return (
     <div className="grid gap-4 rounded border border-gray-100 p-4 lg:grid-cols-[80px_1.8fr_150px_170px_170px_56px]">

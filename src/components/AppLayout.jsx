@@ -34,8 +34,8 @@ const AppLayout = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] md:grid md:grid-cols-[280px_1fr]">
-      <aside className="flex w-full flex-col border-r border-white/10 bg-[var(--color-primary)] text-white shadow-xl">
+    <div className="min-h-screen bg-[var(--color-bg)] md:grid md:grid-cols-[280px_1fr] md:h-screen md:overflow-hidden">
+      <aside className="flex w-full flex-col border-r border-white/10 bg-[var(--color-primary)] text-white shadow-xl md:h-screen md:overflow-y-auto scrollbar-hide">
         <div className="border-b border-white/15 px-6 py-6">
           <div className="mb-5 max-w-[170px]">
             <TermopharmaLogo className="w-full" compact />
@@ -47,7 +47,7 @@ const AppLayout = () => {
           </p>
         </div>
 
-        <nav className="flex-1 space-y-6 overflow-y-auto px-4 py-5 font-['var(--font-body)']">
+        <nav className="flex-1 space-y-6 px-4 py-5 font-['var(--font-body)']">
           {NAV_SECTIONS.map((section) => (
             <div key={section.title}>
               <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
@@ -104,7 +104,7 @@ const AppLayout = () => {
         </div>
       </aside>
 
-      <main className="overflow-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 md:h-screen md:overflow-y-auto">
         <Outlet />
       </main>
     </div>

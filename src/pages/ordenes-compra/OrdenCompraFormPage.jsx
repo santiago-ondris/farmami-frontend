@@ -98,6 +98,11 @@ const OrdenCompraFormPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!formData.fecha) {
+      toast.error('Selecciona una fecha');
+      return;
+    }
+
     if (!formData.proveedor_id) {
       toast.error('Selecciona un proveedor');
       return;
@@ -111,6 +116,7 @@ const OrdenCompraFormPage = () => {
     setSaving(true);
     try {
       const payload = {
+        fecha: formData.fecha,
         proveedor_id: formData.proveedor_id,
         condicion_pago: formData.condicion_pago,
         fecha_entrega: formData.fecha_entrega || null,
@@ -158,8 +164,8 @@ const OrdenCompraFormPage = () => {
             <input value={formData.numero || 'Se generara al guardar'} readOnly className="w-full rounded border border-gray-200 bg-gray-50 px-3 py-2 outline-none" />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">Fecha</label>
-            <input value={formData.fecha || getTodayDateInputValue()} readOnly className="w-full rounded border border-gray-200 bg-gray-50 px-3 py-2 outline-none" />
+            <label className="mb-1 block text-sm font-medium">Fecha *</label>
+            <DateField value={formData.fecha} onChange={(value) => setFormData((prev) => ({ ...prev, fecha: value }))} required />
           </div>
           <div className="xl:col-span-2">
             <label className="mb-1 block text-sm font-medium">Proveedor *</label>

@@ -5,7 +5,12 @@ import api from '../../lib/axios';
 import { formatDateDisplay } from '../../lib/date';
 import { confirmToast } from '../../lib/confirmToast';
 
-const formatMoney = (value) => Number(value || 0).toFixed(2);
+const formatMoney = (value) => {
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+  }).format(Number(value || 0));
+};
 
 const OrdenesCompraPage = () => {
   const [ordenesCompra, setOrdenesCompra] = useState([]);
