@@ -124,7 +124,7 @@ const DetalleEgresoPage = () => {
               <div className="detail-item"><span className="detail-item-label">Lote</span>{egreso.lote}</div>
               <div className="detail-item"><span className="detail-item-label">Vencimiento lote</span>{formatDateDisplay(egreso.vencimiento)}</div>
               <div className="detail-item"><span className="detail-item-label">Serial</span>{egreso.serial || '-'}</div>
-              <div className="detail-item"><span className="detail-item-label">Orden de compra</span>{egreso.orden_compra || '-'}</div>
+              <div className="detail-item"><span className="detail-item-label">Numero de Remito</span>{egreso.orden_compra || '-'}</div>
             </div>
 
             <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
@@ -168,7 +168,7 @@ const DetalleEgresoPage = () => {
                 <input type="text" name="serial" value={formData.serial} onChange={handleChange} className="field-input" />
               </div>
               <div>
-                <label className="field-label">Orden compra</label>
+                <label className="field-label">Numero de Remito</label>
                 <input type="text" name="orden_compra" value={formData.orden_compra} onChange={handleChange} className="field-input" />
               </div>
             </div>

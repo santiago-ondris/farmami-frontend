@@ -163,7 +163,7 @@ const NuevoEgresoPage = () => {
             <input type="text" name="serial" value={formData.serial} onChange={handleChange} className="w-full p-2 border rounded" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Orden de Compra</label>
+            <label className="block text-sm font-medium mb-1">Numero de Remito</label>
             <input type="text" name="orden_compra" value={formData.orden_compra} onChange={handleChange} className="w-full p-2 border rounded" />
           </div>
 

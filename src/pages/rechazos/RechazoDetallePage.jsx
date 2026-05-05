@@ -10,6 +10,7 @@ const RechazoDetallePage = () => {
   const navigate = useNavigate();
   const [rechazo, setRechazo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   useEffect(() => {
     const fetchRechazo = async () => {
@@ -26,6 +27,20 @@ const RechazoDetallePage = () => {
 
     fetchRechazo();
   }, [id, navigate]);
+
+  const handlePdf = async () => {
+    if (isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+    try {
+      const response = await api.get(`/api/rechazos/${id}/pdf`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      toast.error('No se pudo generar el PDF');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   const handleDelete = async () => {
     const confirmed = await confirmToast({
@@ -55,7 +70,12 @@ const RechazoDetallePage = () => {
           <h1 className="section-title">Detalle de rechazo</h1>
           <p className="section-subtitle mt-2">{rechazo.product?.nombre} · Lote {rechazo.lote}</p>
         </div>
-        <Link to="/rechazos" className="ghost-link">Volver</Link>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={handlePdf} disabled={isGeneratingPdf} className="toolbar-button disabled:opacity-60">
+            {isGeneratingPdf ? 'Generando PDF...' : 'Generar PDF'}
+          </button>
+          <Link to="/rechazos" className="ghost-link">Volver</Link>
+        </div>
       </div>
 
       <section className="panel p-6">
