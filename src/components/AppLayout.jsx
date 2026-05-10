@@ -16,8 +16,20 @@ const NAV_SECTIONS = [
   {
     title: 'Comercial',
     items: [
-      { to: '/clientes', label: 'Clientes' },
-      { to: '/proveedores', label: 'Proveedores' },
+      {
+        to: '/clientes',
+        label: 'Clientes',
+        children: [
+          { to: '/clientes/documentacion', label: 'Documentacion' }
+        ]
+      },
+      {
+        to: '/proveedores',
+        label: 'Proveedores',
+        children: [
+          { to: '/proveedores/documentacion', label: 'Documentacion' }
+        ]
+      },
       { to: '/remitos', label: 'Remitos' },
       { to: '/ordenes-compra', label: 'Ordenes de compra' }
     ]
@@ -55,17 +67,35 @@ const AppLayout = () => {
               </p>
               <div className="space-y-1">
                 {section.items.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className={({ isActive }) => `block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-white text-[var(--color-primary)] shadow-lg'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {item.label}
-                  </NavLink>
+                  <div key={item.to} className="space-y-1">
+                    <NavLink
+                      to={item.to}
+                      className={({ isActive }) => `block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'bg-white text-[var(--color-primary)] shadow-lg'
+                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {item.label}
+                    </NavLink>
+                    {item.children?.length ? (
+                      <div className="space-y-1 pl-4">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.to}
+                            to={child.to}
+                            className={({ isActive }) => `block rounded-lg px-4 py-2 text-sm transition-colors ${
+                              isActive
+                                ? 'bg-white/90 font-semibold text-[var(--color-primary)] shadow-md'
+                                : 'text-white/65 hover:bg-white/10 hover:text-white'
+                            }`}
+                          >
+                            {child.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                 ))}
               </div>
             </div>

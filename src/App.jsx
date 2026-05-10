@@ -19,10 +19,12 @@ import ClientesPage from './pages/clientes/ClientesPage.jsx';
 import ClienteFormPage from './pages/clientes/ClienteFormPage.jsx';
 import ClienteDetallePage from './pages/clientes/ClienteDetallePage.jsx';
 import ClienteEvaluacionFormPage from './pages/clientes/ClienteEvaluacionFormPage.jsx';
+import ClientesDocumentacionPage from './pages/clientes/ClientesDocumentacionPage.jsx';
 import ProveedoresPage from './pages/proveedores/ProveedoresPage.jsx';
 import ProveedorFormPage from './pages/proveedores/ProveedorFormPage.jsx';
 import ProveedorDetallePage from './pages/proveedores/ProveedorDetallePage.jsx';
 import ProveedorEvaluacionFormPage from './pages/proveedores/ProveedorEvaluacionFormPage.jsx';
+import ProveedoresDocumentacionPage from './pages/proveedores/ProveedoresDocumentacionPage.jsx';
 import RechazosPage from './pages/rechazos/RechazosPage.jsx';
 import RechazoFormPage from './pages/rechazos/RechazoFormPage.jsx';
 import RechazoDetallePage from './pages/rechazos/RechazoDetallePage.jsx';
@@ -77,12 +79,14 @@ function App() {
             <Route path="/productos" element={<ProductosPage />} />
             <Route path="/productos/:id" element={<DetalleProductoPage />} />
             <Route path="/clientes" element={<ClientesPage />} />
+            <Route path="/clientes/documentacion" element={<ClientesDocumentacionPage />} />
             <Route path="/clientes/nuevo" element={<ClienteFormPage />} />
             <Route path="/clientes/:id" element={<ClienteDetallePage />} />
             <Route path="/clientes/:id/editar" element={<ClienteFormPage />} />
             <Route path="/clientes/:id/evaluaciones/nueva" element={<ClienteEvaluacionFormPage />} />
             <Route path="/clientes/:id/evaluaciones/:evaluacionId/editar" element={<ClienteEvaluacionFormPage />} />
             <Route path="/proveedores" element={<ProveedoresPage />} />
+            <Route path="/proveedores/documentacion" element={<ProveedoresDocumentacionPage />} />
             <Route path="/proveedores/nuevo" element={<ProveedorFormPage />} />
             <Route path="/proveedores/:id" element={<ProveedorDetallePage />} />
             <Route path="/proveedores/:id/editar" element={<ProveedorFormPage />} />

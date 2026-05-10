@@ -3,6 +3,22 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
 import { useAuth } from '../../context/AuthContext';
+import ProductLotesModal from '../../components/ProductLotesModal';
+
+const STOCK_EXPORT_FILTERS = {
+  withStock: {
+    title: 'Exportar solo productos con stock',
+    description: 'Incluye exclusivamente productos con stock mayor a cero.'
+  },
+  withoutStock: {
+    title: 'Exportar solo productos sin stock',
+    description: 'Incluye productos sin unidades disponibles o con stock en cero.'
+  },
+  all: {
+    title: 'Exportar todos los productos',
+    description: 'No aplica filtros de stock al Excel.'
+  }
+};
 
 const ProductosPage = () => {
   const { user } = useAuth();
@@ -11,6 +27,12 @@ const ProductosPage = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productLotes, setProductLotes] = useState([]);
+  const [loadingLotes, setLoadingLotes] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportScope, setExportScope] = useState('current');
   const limit = 50;
 
   useEffect(() => {
@@ -70,13 +92,15 @@ const ProductosPage = () => {
     );
   };
 
-  const handleExport = async (filterCurrent = false) => {
+  const handleExport = async (scope = 'current', stockStatus = 'all') => {
     try {
+      setExporting(true);
       const params = new URLSearchParams();
-      if (filterCurrent) {
+      if (scope === 'current') {
         params.append('filter', 'current');
         if (search) params.append('search', search);
       }
+      params.append('stock_status', stockStatus);
 
       const response = await api.get(`/api/export/stock?${params.toString()}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -87,7 +111,37 @@ const ProductosPage = () => {
       link.click();
     } catch (e) {
       toast.error('Error al exportar stock');
+    } finally {
+      setExporting(false);
+      setShowExportModal(false);
     }
+  };
+
+  const openExportModal = (scope) => {
+    setExportScope(scope);
+    setShowExportModal(true);
+  };
+
+  const handleOpenLotes = async (producto) => {
+    setSelectedProduct(producto);
+    setProductLotes([]);
+    setLoadingLotes(true);
+
+    try {
+      const { data } = await api.get(`/api/products/${producto.id}/lotes`);
+      setSelectedProduct(data.product);
+      setProductLotes(data.lotes);
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al cargar lotes');
+    } finally {
+      setLoadingLotes(false);
+    }
+  };
+
+  const handleCloseLotes = () => {
+    setSelectedProduct(null);
+    setProductLotes([]);
+    setLoadingLotes(false);
   };
 
   return (
@@ -99,10 +153,10 @@ const ProductosPage = () => {
           <p className="section-subtitle mt-2">Catalogo operativo con stock consolidado y acceso al historial de movimientos.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => handleExport(true)} className="toolbar-button cursor-pointer">
+          <button onClick={() => openExportModal('current')} className="toolbar-button cursor-pointer">
             Exportar vista
           </button>
-          <button onClick={() => handleExport(false)} className="toolbar-button cursor-pointer">
+          <button onClick={() => openExportModal('all')} className="toolbar-button cursor-pointer">
             Exportar todo
           </button>
         </div>
@@ -124,25 +178,35 @@ const ProductosPage = () => {
       </div>
 
       <div className="data-table-wrap">
-        <table className="data-table min-w-[700px]">
+        <table className="data-table min-w-[820px]">
           <thead>
             <tr>
               <th>Producto</th>
               <th>Laboratorio</th>
+              <th>Lotes</th>
               <th className="text-right">Stock actual</th>
               <th className="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="4" className="p-4 text-center">Cargando...</td></tr>
+              <tr><td colSpan="5" className="p-4 text-center">Cargando...</td></tr>
             ) : productos.length === 0 ? (
-              <tr><td colSpan="4" className="p-4 text-center text-gray-500">No hay productos registrados</td></tr>
+              <tr><td colSpan="5" className="p-4 text-center text-gray-500">No hay productos registrados</td></tr>
             ) : (
               productos.map((producto) => (
                 <tr key={producto.id}>
                   <td className="font-semibold text-[var(--color-primary)]">{producto.nombre}</td>
                   <td>{producto.laboratorio}</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenLotes(producto)}
+                      className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+                    >
+                      Ver lotes
+                    </button>
+                  </td>
                   <td className="text-right">
                     <span className={`font-['var(--font-heading)'] text-2xl font-bold ${producto.stock < 0 ? 'text-red-600' : 'text-gray-800'}`}>
                       {producto.stock}
@@ -180,6 +244,59 @@ const ProductosPage = () => {
           </button>
         </div>
       </div>
+
+      <ProductLotesModal
+        open={!!selectedProduct}
+        product={selectedProduct}
+        lotes={productLotes}
+        loading={loadingLotes}
+        onClose={handleCloseLotes}
+      />
+
+      {showExportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4" onClick={() => !exporting && setShowExportModal(false)}>
+          <div
+            className="w-full max-w-xl overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.18)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="border-b border-slate-100 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2ff_100%)] px-6 py-5 sm:px-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">Exportacion de stock</p>
+              <h3 className="mt-2 font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-primary)]">Elegir contenido para el Excel</h3>
+              <p className="mt-2 text-sm text-slate-500">
+                {exportScope === 'current'
+                  ? 'El archivo respetara la busqueda actual y luego aplicara el filtro de stock que selecciones.'
+                  : 'El archivo incluira todo el catalogo y luego aplicara el filtro de stock que selecciones.'}
+              </p>
+            </div>
+
+            <div className="space-y-3 px-6 py-5 sm:px-8">
+              {Object.entries(STOCK_EXPORT_FILTERS).map(([key, option]) => (
+                <button
+                  key={key}
+                  type="button"
+                  disabled={exporting}
+                  onClick={() => handleExport(exportScope, key)}
+                  className="w-full rounded-3xl border border-slate-200 bg-white px-5 py-4 text-left transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <div className="font-semibold text-slate-900">{option.title}</div>
+                  <div className="mt-1 text-sm text-slate-500">{option.description}</div>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex justify-end border-t border-slate-100 px-6 py-4 sm:px-8">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                disabled={exporting}
+                className="secondary-button !px-4 !py-2 !text-xs disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {exporting ? 'Preparando...' : 'Cancelar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

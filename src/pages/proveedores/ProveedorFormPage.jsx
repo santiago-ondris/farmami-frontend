@@ -8,6 +8,7 @@ import { TIPOS_PROVEEDOR } from '../../lib/fase2';
 const BOOLEAN_FIELDS = [
   ['habilitacion_jurisdiccion_provincial', 'Habilitacion jurisdiccion provincial'],
   ['ultima_resolucion_djf', 'Ultima resolucion DJF'],
+  ['certificado_habilitacion_anmat', 'Certificado habilitacion ANMAT'],
   ['disposicion_habilitacion_anmat', 'Disposicion habilitacion ANMAT'],
   ['cert_buenas_practicas_transito', 'Certificado buenas practicas transito'],
   ['resolucion_cambio_direccion_tecnica', 'Resolucion cambio direccion tecnica'],
@@ -30,6 +31,7 @@ const EMPTY_FORM = {
   observaciones: '',
   habilitacion_jurisdiccion_provincial: false,
   ultima_resolucion_djf: false,
+  certificado_habilitacion_anmat: false,
   disposicion_habilitacion_anmat: false,
   cert_buenas_practicas_transito: false,
   resolucion_cambio_direccion_tecnica: false,
