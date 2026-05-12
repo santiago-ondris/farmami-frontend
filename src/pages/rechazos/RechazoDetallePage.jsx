@@ -68,7 +68,7 @@ const RechazoDetallePage = () => {
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Control de calidad</p>
           <h1 className="section-title">Detalle de rechazo</h1>
-          <p className="section-subtitle mt-2">{rechazo.product?.nombre} · Lote {rechazo.lote}</p>
+          <p className="section-subtitle mt-2">{formatDateDisplay(rechazo.fecha)} · {rechazo.proveedor?.nombre}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={handlePdf} disabled={isGeneratingPdf} className="toolbar-button disabled:opacity-60">
@@ -86,12 +86,34 @@ const RechazoDetallePage = () => {
 
         <div className="detail-grid md:grid-cols-2">
           <div className="detail-item"><span className="detail-item-label">Fecha</span>{formatDateDisplay(rechazo.fecha)}</div>
-          <div className="detail-item"><span className="detail-item-label">Cantidad</span>{rechazo.cantidad}</div>
-          <div className="detail-item"><span className="detail-item-label">Producto</span>{rechazo.product?.nombre || '-'}</div>
           <div className="detail-item"><span className="detail-item-label">Proveedor</span>{rechazo.proveedor?.nombre || '-'}</div>
-          <div className="detail-item"><span className="detail-item-label">Lote</span>{rechazo.lote}</div>
           <div className="detail-item"><span className="detail-item-label">Remito</span>{rechazo.remito || '-'}</div>
-          <div className="detail-item md:col-span-2"><span className="detail-item-label">Motivo</span>{rechazo.motivo_rechazo}</div>
+        </div>
+
+        <div className="mt-8">
+          <h3 className="mb-4 font-['var(--font-heading)'] text-lg font-bold text-[var(--color-primary)]">Productos rechazados</h3>
+          <div className="overflow-x-auto rounded-lg border border-gray-100 shadow-sm">
+            <table className="w-full min-w-[700px] border-collapse text-left">
+              <thead>
+                <tr className="bg-gray-50 text-sm text-gray-600">
+                  <th className="border-b p-3">Producto</th>
+                  <th className="border-b p-3">Lote</th>
+                  <th className="border-b p-3">Cantidad</th>
+                  <th className="border-b p-3">Motivo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(rechazo.items || []).map((item) => (
+                  <tr key={item.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
+                    <td className="p-3 font-medium text-[var(--color-primary)]">{item.product?.nombre}</td>
+                    <td className="p-3">{item.lote}</td>
+                    <td className="p-3 font-semibold">{item.cantidad}</td>
+                    <td className="p-3">{item.motivo_rechazo}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">

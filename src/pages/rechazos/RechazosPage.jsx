@@ -72,10 +72,8 @@ const RechazosPage = () => {
           <thead>
             <tr className="bg-gray-50 text-sm text-gray-600">
               <th className="border-b p-3">Fecha</th>
-              <th className="border-b p-3">Producto</th>
-              <th className="border-b p-3">Lote</th>
-              <th className="border-b p-3">Motivo</th>
-              <th className="border-b p-3">Cantidad</th>
+              <th className="border-b p-3">Productos</th>
+              <th className="border-b p-3">Cant. Total</th>
               <th className="border-b p-3">Remito</th>
               <th className="border-b p-3">Proveedor</th>
               <th className="border-b p-3">Acciones</th>
@@ -86,22 +84,31 @@ const RechazosPage = () => {
               <tr><td colSpan="8" className="p-4 text-center">Cargando...</td></tr>
             ) : rechazos.length === 0 ? (
               <tr><td colSpan="8" className="p-4 text-center text-gray-500">No hay rechazos cargados.</td></tr>
-            ) : rechazos.map((rechazo) => (
-              <tr key={rechazo.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
-                <td className="p-3">{formatDateDisplay(rechazo.fecha)}</td>
-                <td className="p-3 font-medium text-[var(--color-primary)]">{rechazo.product?.nombre}</td>
-                <td className="p-3">{rechazo.lote}</td>
-                <td className="p-3">{rechazo.motivo_rechazo}</td>
-                <td className="p-3 font-semibold">{rechazo.cantidad}</td>
-                <td className="p-3">{rechazo.remito || '-'}</td>
-                <td className="p-3">{rechazo.proveedor?.nombre || '-'}</td>
-                <td className="p-3">
-                  <Link to={`/rechazos/${rechazo.id}`} className="text-xs font-semibold text-[var(--color-accent)] hover:underline">
-                    Detalle
-                  </Link>
-                </td>
-              </tr>
-            ))}
+            ) : rechazos.map((rechazo) => {
+              const itemsCount = rechazo.items?.length || 0;
+              const productSummary = itemsCount === 1 
+                ? rechazo.items[0].product?.nombre 
+                : itemsCount > 1 
+                  ? `Varios productos (${itemsCount})` 
+                  : '-';
+              
+              const totalQuantity = (rechazo.items || []).reduce((acc, item) => acc + item.cantidad, 0);
+
+              return (
+                <tr key={rechazo.id} className="border-b border-gray-100 text-sm last:border-b-0 hover:bg-gray-50">
+                  <td className="p-3">{formatDateDisplay(rechazo.fecha)}</td>
+                  <td className="p-3 font-medium text-[var(--color-primary)]">{productSummary}</td>
+                  <td className="p-3 font-semibold">{totalQuantity}</td>
+                  <td className="p-3">{rechazo.remito || '-'}</td>
+                  <td className="p-3">{rechazo.proveedor?.nombre || '-'}</td>
+                  <td className="p-3">
+                    <Link to={`/rechazos/${rechazo.id}`} className="text-xs font-semibold text-[var(--color-accent)] hover:underline">
+                      Detalle
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

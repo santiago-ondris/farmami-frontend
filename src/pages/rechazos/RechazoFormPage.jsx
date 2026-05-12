@@ -3,19 +3,23 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
 import DateField from '../../components/DateField';
-import ProductAutocomplete from '../../components/ProductAutocomplete';
+import RechazoItemsEditor from '../../components/rechazos/RechazoItemsEditor';
 import ProveedorAutocomplete from '../../components/ProveedorAutocomplete';
 import { handleFormInvalid } from '../../lib/validation';
 import { formatDateInputValue, getTodayDateInputValue } from '../../lib/date';
 
-const EMPTY_FORM = {
-  fecha: getTodayDateInputValue(),
+const createEmptyItem = () => ({
   product_id: '',
   lote: '',
-  motivo_rechazo: '',
   cantidad: '',
+  motivo_rechazo: ''
+});
+
+const EMPTY_FORM = {
+  fecha: getTodayDateInputValue(),
   remito: '',
-  proveedor_id: ''
+  proveedor_id: '',
+  items: [createEmptyItem()]
 };
 
 const RechazoFormPage = () => {
@@ -34,12 +38,14 @@ const RechazoFormPage = () => {
         const { data } = await api.get(`/api/rechazos/${id}`);
         setFormData({
           fecha: formatDateInputValue(data.fecha),
-          product_id: data.product_id,
-          lote: data.lote,
-          motivo_rechazo: data.motivo_rechazo,
-          cantidad: String(data.cantidad),
           remito: data.remito || '',
-          proveedor_id: data.proveedor_id
+          proveedor_id: data.proveedor_id,
+          items: data.items.map((item) => ({
+            product_id: item.product_id,
+            lote: item.lote,
+            cantidad: String(item.cantidad),
+            motivo_rechazo: item.motivo_rechazo
+          }))
         });
       } catch (error) {
         toast.error('No se pudo cargar el rechazo');
@@ -57,19 +63,54 @@ const RechazoFormPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleItemChange = (index, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.map((item, itemIndex) => (
+        itemIndex === index ? { ...item, [field]: value } : item
+      ))
+    }));
+  };
+
+  const handleAddItem = () => {
+    setFormData((prev) => ({
+      ...prev,
+      items: [...prev.items, createEmptyItem()]
+    }));
+  };
+
+  const handleRemoveItem = (index) => {
+    if (formData.items.length === 1) return;
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, itemIndex) => itemIndex !== index)
+    }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!formData.product_id || !formData.proveedor_id) {
-      toast.error('Selecciona producto y proveedor');
+    if (!formData.proveedor_id) {
+      toast.error('Selecciona el proveedor');
+      return;
+    }
+
+    if (formData.items.length === 0 || formData.items.some(item => !item.product_id || !item.lote || !item.cantidad || !item.motivo_rechazo)) {
+      toast.error('Completa todos los campos de los productos rechazados');
       return;
     }
 
     setSaving(true);
     try {
       const payload = {
-        ...formData,
         fecha: formData.fecha,
-        cantidad: parseInt(formData.cantidad, 10)
+        remito: formData.remito || null,
+        proveedor_id: formData.proveedor_id,
+        items: formData.items.map((item) => ({
+          product_id: item.product_id,
+          lote: item.lote,
+          motivo_rechazo: item.motivo_rechazo,
+          cantidad: parseInt(item.cantidad, 10)
+        }))
       };
 
       if (isEditing) {
@@ -113,31 +154,22 @@ const RechazoFormPage = () => {
               <DateField value={formData.fecha} onChange={(value) => setFormData((prev) => ({ ...prev, fecha: value }))} />
             </div>
             <div>
-              <label className="field-label">Cantidad *</label>
-              <input required min="1" type="number" name="cantidad" value={formData.cantidad} onChange={handleChange} className="field-input" />
-            </div>
-            <div className="md:col-span-2">
-              <label className="field-label">Producto *</label>
-              <ProductAutocomplete value={formData.product_id} onChange={(productId) => setFormData((prev) => ({ ...prev, product_id: productId }))} />
-            </div>
-            <div>
-              <label className="field-label">Lote *</label>
-              <input required name="lote" value={formData.lote} onChange={handleChange} className="field-input" />
-            </div>
-            <div>
-              <label className="field-label">Remito</label>
-              <input name="remito" value={formData.remito} onChange={handleChange} className="field-input" />
-            </div>
-            <div className="md:col-span-2">
               <label className="field-label">Proveedor *</label>
               <ProveedorAutocomplete value={formData.proveedor_id} onChange={(proveedorId) => setFormData((prev) => ({ ...prev, proveedor_id: proveedorId }))} />
             </div>
             <div className="md:col-span-2">
-              <label className="field-label">Motivo de rechazo *</label>
-              <textarea required rows="4" name="motivo_rechazo" value={formData.motivo_rechazo} onChange={handleChange} className="field-input" />
+              <label className="field-label">Remito</label>
+              <input name="remito" value={formData.remito} onChange={handleChange} className="field-input" />
             </div>
           </div>
         </section>
+
+        <RechazoItemsEditor
+          items={formData.items}
+          onAddItem={handleAddItem}
+          onChangeItem={handleItemChange}
+          onRemoveItem={handleRemoveItem}
+        />
 
         <div className="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
           <Link to={isEditing ? `/rechazos/${id}` : '/rechazos'} className="secondary-button">Cancelar</Link>
