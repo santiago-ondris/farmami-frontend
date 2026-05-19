@@ -10,7 +10,8 @@ const NAV_SECTIONS = [
       { to: '/dashboard', label: 'Inicio' },
       { to: '/productos', label: 'Stock' },
       { to: '/ingresos', label: 'Ingresos' },
-      { to: '/egresos', label: 'Egresos' }
+      { to: '/egresos', label: 'Egresos' },
+      { to: '/manual-usuario', label: 'Manual de usuario' }
     ]
   },
   {
@@ -31,7 +32,8 @@ const NAV_SECTIONS = [
         ]
       },
       { to: '/remitos', label: 'Remitos' },
-      { to: '/ordenes-compra', label: 'Ordenes de compra' }
+      { to: '/ordenes-compra', label: 'Ordenes de compra' },
+      { to: '/presupuestos', label: 'Presupuestos' }
     ]
   },
   {

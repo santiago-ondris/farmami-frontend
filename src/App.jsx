@@ -34,6 +34,10 @@ import RemitoDetallePage from './pages/remitos/RemitoDetallePage.jsx';
 import OrdenesCompraPage from './pages/ordenes-compra/OrdenesCompraPage.jsx';
 import OrdenCompraFormPage from './pages/ordenes-compra/OrdenCompraFormPage.jsx';
 import OrdenCompraDetallePage from './pages/ordenes-compra/OrdenCompraDetallePage.jsx';
+import PresupuestosPage from './pages/presupuestos/PresupuestosPage.jsx';
+import PresupuestoFormPage from './pages/presupuestos/PresupuestoFormPage.jsx';
+import PresupuestoDetallePage from './pages/presupuestos/PresupuestoDetallePage.jsx';
+import ManualUsuarioPage from './pages/ManualUsuarioPage.jsx';
 
 function App() {
   return (
@@ -70,6 +74,7 @@ function App() {
 
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route path="/dashboard" element={<HomePage />} />
+            <Route path="/manual-usuario" element={<ManualUsuarioPage />} />
             <Route path="/ingresos" element={<IngresosPage />} />
             <Route path="/ingresos/nuevo" element={<NuevoIngresoPage />} />
             <Route path="/ingresos/:id" element={<DetalleIngresoPage />} />
@@ -103,6 +108,10 @@ function App() {
             <Route path="/ordenes-compra/nuevo" element={<OrdenCompraFormPage />} />
             <Route path="/ordenes-compra/:id" element={<OrdenCompraDetallePage />} />
             <Route path="/ordenes-compra/:id/editar" element={<OrdenCompraFormPage />} />
+            <Route path="/presupuestos" element={<PresupuestosPage />} />
+            <Route path="/presupuestos/nuevo" element={<PresupuestoFormPage />} />
+            <Route path="/presupuestos/:id" element={<PresupuestoDetallePage />} />
+            <Route path="/presupuestos/:id/editar" element={<PresupuestoFormPage />} />
             <Route path="/admin/usuarios" element={
               <AdminRoute><UsuariosPage /></AdminRoute>
             } />
