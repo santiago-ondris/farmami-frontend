@@ -74,6 +74,12 @@ const EgresosPage = () => {
     }
   };
 
+  const getOrigen = (egreso) => {
+    if (egreso.rechazo_item_id) return 'Rechazo';
+    if (egreso.remito_item_id) return 'Remito';
+    return 'Manual';
+  };
+
   return (
     <div className="space-y-6 font-['var(--font-body)']">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -106,14 +112,15 @@ const EgresosPage = () => {
       </div>
 
       <div className="data-table-wrap">
-        <table className="data-table min-w-[920px]">
+        <table className="data-table min-w-[1040px]">
           <thead>
             <tr>
               <th>F. entrega</th>
               <th>Producto / lote</th>
               <th className="text-right">Cant.</th>
               <th>Empresa</th>
-              <th>Remito</th>
+              <th>Origen</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -132,6 +139,9 @@ const EgresosPage = () => {
                   </td>
                   <td className="text-right font-['var(--font-heading)'] text-2xl font-bold text-[var(--color-action)]">{egreso.cantidad}</td>
                   <td className="font-medium">{egreso.empresa_solicitante}</td>
+                  <td>
+                    <span className="status-chip bg-blue-100 text-blue-800">{getOrigen(egreso)}</span>
+                  </td>
                   <td>
                     <span className={`status-chip ${getBadgeColor(egreso.estado_remito)}`}>
                       {egreso.estado_remito}

@@ -89,6 +89,14 @@ const DetalleEgresoPage = () => {
   if (loading) return <div>Cargando...</div>;
   if (!egreso) return null;
 
+  const origen = egreso.rechazo_item_id ? 'Rechazo' : egreso.remito_item_id ? 'Remito' : 'Manual';
+  const origenPath = egreso.rechazo_item?.rechazo_id
+    ? `/rechazos/${egreso.rechazo_item.rechazo_id}`
+    : egreso.remito_item?.remito_id ? `/remitos/${egreso.remito_item.remito_id}` : null;
+  const origenLabel = egreso.rechazo_item?.rechazo
+    ? `Rechazo ${egreso.rechazo_item.rechazo.remito || egreso.rechazo_item.rechazo.id}`
+    : egreso.remito_item?.remito?.numero ? `Remito ${egreso.remito_item.remito.numero}` : 'Manual';
+
   return (
     <div className="mx-auto max-w-5xl space-y-6 font-['var(--font-body)']">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -125,6 +133,14 @@ const DetalleEgresoPage = () => {
               <div className="detail-item"><span className="detail-item-label">Vencimiento lote</span>{formatDateDisplay(egreso.vencimiento)}</div>
               <div className="detail-item"><span className="detail-item-label">Serial</span>{egreso.serial || '-'}</div>
               <div className="detail-item"><span className="detail-item-label">Numero de Remito</span>{egreso.orden_compra || '-'}</div>
+              <div className="detail-item">
+                <span className="detail-item-label">Origen</span>
+                {origenPath ? (
+                  <Link to={origenPath} className="table-link">{origen}: {origenLabel}</Link>
+                ) : (
+                  origen
+                )}
+              </div>
             </div>
 
             <div className="mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">

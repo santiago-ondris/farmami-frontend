@@ -5,6 +5,7 @@ import api from '../../lib/axios';
 import DateField from '../../components/DateField';
 import RechazoItemsEditor from '../../components/rechazos/RechazoItemsEditor';
 import ProveedorAutocomplete from '../../components/ProveedorAutocomplete';
+import StockWarningModal from '../../components/StockWarningModal';
 import { handleFormInvalid } from '../../lib/validation';
 import { formatDateInputValue, getTodayDateInputValue } from '../../lib/date';
 
@@ -28,6 +29,8 @@ const RechazoFormPage = () => {
   const isEditing = Boolean(id);
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
+  const [showWarnings, setShowWarnings] = useState(false);
+  const [warningItems, setWarningItems] = useState([]);
   const [formData, setFormData] = useState(EMPTY_FORM);
 
   useEffect(() => {
@@ -87,8 +90,7 @@ const RechazoFormPage = () => {
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const submit = async (force = false) => {
     if (!formData.proveedor_id) {
       toast.error('Selecciona el proveedor');
       return;
@@ -105,6 +107,7 @@ const RechazoFormPage = () => {
         fecha: formData.fecha,
         remito: formData.remito || null,
         proveedor_id: formData.proveedor_id,
+        force,
         items: formData.items.map((item) => ({
           product_id: item.product_id,
           lote: item.lote,
@@ -123,10 +126,20 @@ const RechazoFormPage = () => {
         navigate(`/rechazos/${data.id}`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Error al guardar rechazo');
+      if (error.response?.data?.warning === 'stock_negativo') {
+        setWarningItems(error.response.data.stock_warnings || []);
+        setShowWarnings(true);
+      } else {
+        toast.error(error.response?.data?.error || 'Error al guardar rechazo');
+      }
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await submit(false);
   };
 
   if (loading) return <div className="font-['var(--font-body)']">Cargando...</div>;
@@ -178,6 +191,17 @@ const RechazoFormPage = () => {
           </button>
         </div>
       </form>
+
+      <StockWarningModal
+        open={showWarnings}
+        description="Uno o mas productos quedarian con stock en negativo si guardas este rechazo."
+        warnings={warningItems}
+        onClose={() => setShowWarnings(false)}
+        onConfirm={() => {
+          setShowWarnings(false);
+          submit(true);
+        }}
+      />
     </div>
   );
 };

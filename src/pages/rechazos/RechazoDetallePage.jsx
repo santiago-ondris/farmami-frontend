@@ -93,13 +93,14 @@ const RechazoDetallePage = () => {
         <div className="mt-8">
           <h3 className="mb-4 font-['var(--font-heading)'] text-lg font-bold text-[var(--color-primary)]">Productos rechazados</h3>
           <div className="overflow-x-auto rounded-lg border border-gray-100 shadow-sm">
-            <table className="w-full min-w-[700px] border-collapse text-left">
+            <table className="w-full min-w-[820px] border-collapse text-left">
               <thead>
                 <tr className="bg-gray-50 text-sm text-gray-600">
                   <th className="border-b p-3">Producto</th>
                   <th className="border-b p-3">Lote</th>
                   <th className="border-b p-3">Cantidad</th>
                   <th className="border-b p-3">Motivo</th>
+                  <th className="border-b p-3">Egreso</th>
                 </tr>
               </thead>
               <tbody>
@@ -109,6 +110,13 @@ const RechazoDetallePage = () => {
                     <td className="p-3">{item.lote}</td>
                     <td className="p-3 font-semibold">{item.cantidad}</td>
                     <td className="p-3">{item.motivo_rechazo}</td>
+                    <td className="p-3">
+                      {item.egresos?.[0] ? (
+                        <Link to={`/egresos/${item.egresos[0].id}`} className="table-link">Ir a egreso</Link>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

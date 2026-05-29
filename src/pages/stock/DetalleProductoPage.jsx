@@ -87,6 +87,9 @@ const DetalleProductoPage = () => {
                       {mov.tipo === 'EGRESO' && mov.estado_remito && (
                         <div className="mt-1 text-xs text-gray-400">Estado: {mov.estado_remito}</div>
                       )}
+                      {mov.tipo === 'EGRESO' && mov.origen_label && (
+                        <div className="mt-1 text-xs text-gray-400">Origen: {mov.origen_label}</div>
+                      )}
                     </div>
                   </div>
                   <div className="flex w-full items-center justify-between gap-6 sm:w-auto">
@@ -94,7 +97,7 @@ const DetalleProductoPage = () => {
                       {mov.tipo === 'INGRESO' ? '+' : '-'}{mov.cantidad}
                     </div>
                     <Link to={`/${mov.tipo.toLowerCase()}s/${mov.id}`} className="secondary-button !px-4 !py-2 !text-xs">
-                      Ver remito
+                      Ver movimiento
                     </Link>
                   </div>
                 </div>
