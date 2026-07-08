@@ -37,9 +37,11 @@ const ProductAutocomplete = ({ value, onChange, onSelectProduct, error }) => {
 
   const handleSearch = async (val) => {
     setQuery(val);
+    if (value) {
+      onChange('');
+    }
     if (!val) {
       setResults([]);
-      onChange('');
       return;
     }
     try {

@@ -43,6 +43,9 @@ const DateField = ({
         placeholderText={placeholder}
         calendarClassName="app-datepicker"
         popperClassName="app-datepicker-popper"
+        showMonthDropdown
+        showYearDropdown
+        dropdownMode="select"
         minDate={minDate ? parseDateInputValue(minDate) : undefined}
         maxDate={maxDate ? parseDateInputValue(maxDate) : undefined}
         customInput={<DateInputButton />}

@@ -163,6 +163,38 @@ body {
   color: var(--color-primary);
 }
 
+.app-datepicker .react-datepicker__header__dropdown {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.app-datepicker .react-datepicker__month-dropdown-container,
+.app-datepicker .react-datepicker__year-dropdown-container {
+  margin: 0;
+}
+
+.app-datepicker .react-datepicker__month-select,
+.app-datepicker .react-datepicker__year-select {
+  min-width: 6.8rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.42rem 0.55rem;
+}
+
+.app-datepicker .react-datepicker__month-select:focus,
+.app-datepicker .react-datepicker__year-select:focus {
+  outline: none;
+  border-color: rgba(56, 178, 172, 0.85);
+  box-shadow: 0 0 0 3px rgba(56, 178, 172, 0.12);
+}
+
 .app-datepicker .react-datepicker__navigation {
   top: 14px;
 }

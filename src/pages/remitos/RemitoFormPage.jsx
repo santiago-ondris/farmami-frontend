@@ -6,7 +6,7 @@ import ClienteAutocomplete from '../../components/ClienteAutocomplete';
 import DateField from '../../components/DateField';
 import ProductAutocomplete from '../../components/ProductAutocomplete';
 import StockWarningModal from '../../components/StockWarningModal';
-import { getTodayDateInputValue } from '../../lib/date';
+import { formatDateDisplay, formatDateInputValue, getTodayDateInputValue } from '../../lib/date';
 
 const createEmptyItem = () => ({
   product_id: '',
@@ -16,11 +16,18 @@ const createEmptyItem = () => ({
   vencimiento: ''
 });
 
+const getLoteSelectValue = (lote, vencimiento) => {
+  if (!lote || !vencimiento) return '';
+  return `${encodeURIComponent(lote)}|${formatDateInputValue(vencimiento)}`;
+};
+
 const RemitoFormPage = () => {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [showWarnings, setShowWarnings] = useState(false);
   const [warningItems, setWarningItems] = useState([]);
+  const [lotesByProduct, setLotesByProduct] = useState({});
+  const [loadingLotesByProduct, setLoadingLotesByProduct] = useState({});
   const [formData, setFormData] = useState({
     fecha: getTodayDateInputValue(),
     hora: '12:00',
@@ -38,6 +45,40 @@ const RemitoFormPage = () => {
     }));
   };
 
+  const loadProductLotes = async (productId) => {
+    if (!productId || lotesByProduct[productId] || loadingLotesByProduct[productId]) {
+      return;
+    }
+
+    setLoadingLotesByProduct((prev) => ({ ...prev, [productId]: true }));
+    try {
+      const { data } = await api.get(`/api/products/${productId}/lotes`);
+      setLotesByProduct((prev) => ({ ...prev, [productId]: data.lotes || [] }));
+    } catch (error) {
+      setLotesByProduct((prev) => ({ ...prev, [productId]: [] }));
+      toast.error('No se pudieron cargar los lotes del producto');
+    } finally {
+      setLoadingLotesByProduct((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handleProductClear = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.map((item, itemIndex) => (
+        itemIndex === index
+          ? {
+              ...item,
+              product_id: '',
+              descripcion: '',
+              lote: '',
+              vencimiento: ''
+            }
+          : item
+      ))
+    }));
+  };
+
   const handleProductSelect = (index, product) => {
     setFormData((prev) => ({
       ...prev,
@@ -46,9 +87,31 @@ const RemitoFormPage = () => {
           ? {
               ...item,
               product_id: product.id,
-              descripcion: product.nombre
+              descripcion: product.nombre,
+              lote: '',
+              vencimiento: ''
             }
           : item
+      ))
+    }));
+    loadProductLotes(product.id);
+  };
+
+  const handleLoteSelect = (index, selectedValue) => {
+    const item = formData.items[index];
+    const lotes = lotesByProduct[item.product_id] || [];
+    const selectedLote = lotes.find((lote) => getLoteSelectValue(lote.lote, lote.vencimiento) === selectedValue);
+
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.map((currentItem, itemIndex) => (
+        itemIndex === index
+          ? {
+              ...currentItem,
+              lote: selectedLote?.lote || '',
+              vencimiento: selectedLote ? formatDateInputValue(selectedLote.vencimiento) : ''
+            }
+          : currentItem
       ))
     }));
   };
@@ -139,12 +202,14 @@ const RemitoFormPage = () => {
 
           <div className="space-y-4">
             {formData.items.map((item, index) => (
-              <div key={`item-${index}`} className="grid gap-4 rounded border border-gray-100 p-4 lg:grid-cols-[1.8fr_110px_160px_160px_56px]">
+              <div key={`item-${index}`} className="grid gap-4 rounded border border-gray-100 p-4 lg:grid-cols-[1.8fr_110px_210px_160px_56px]">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500">Producto</label>
                   <ProductAutocomplete
                     value={item.product_id}
-                    onChange={(productId) => handleItemChange(index, 'product_id', productId)}
+                    onChange={(productId) => {
+                      if (!productId) handleProductClear(index);
+                    }}
                     onSelectProduct={(product) => handleProductSelect(index, product)}
                   />
                 </div>
@@ -154,11 +219,35 @@ const RemitoFormPage = () => {
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500">Lote</label>
-                  <input value={item.lote} onChange={(event) => handleItemChange(index, 'lote', event.target.value)} className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)]" />
+                  <select
+                    value={getLoteSelectValue(item.lote, item.vencimiento)}
+                    onChange={(event) => handleLoteSelect(index, event.target.value)}
+                    disabled={!item.product_id || loadingLotesByProduct[item.product_id]}
+                    className="w-full rounded border border-gray-300 px-3 py-2 outline-none focus:border-[var(--color-primary)] disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    {!item.product_id ? (
+                      <option value="">Selecciona producto</option>
+                    ) : loadingLotesByProduct[item.product_id] ? (
+                      <option value="">Cargando lotes...</option>
+                    ) : (lotesByProduct[item.product_id] || []).length === 0 ? (
+                      <option value="">Sin lotes vigentes</option>
+                    ) : (
+                      <>
+                        <option value="">Seleccionar lote</option>
+                        {(lotesByProduct[item.product_id] || []).map((lote) => (
+                          <option key={getLoteSelectValue(lote.lote, lote.vencimiento)} value={getLoteSelectValue(lote.lote, lote.vencimiento)}>
+                            {lote.lote} - Vto. {formatDateDisplay(lote.vencimiento)} - Stock {lote.stock}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500">Vencimiento</label>
-                  <DateField value={item.vencimiento} onChange={(value) => handleItemChange(index, 'vencimiento', value)} />
+                  <div className="flex min-h-[42px] items-center rounded border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-700">
+                    {item.vencimiento ? formatDateDisplay(item.vencimiento) : '-'}
+                  </div>
                 </div>
                 <div className="flex items-end">
                   <button
