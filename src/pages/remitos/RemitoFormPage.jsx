@@ -236,7 +236,7 @@ const RemitoFormPage = () => {
                         <option value="">Seleccionar lote</option>
                         {(lotesByProduct[item.product_id] || []).map((lote) => (
                           <option key={getLoteSelectValue(lote.lote, lote.vencimiento)} value={getLoteSelectValue(lote.lote, lote.vencimiento)}>
-                            {lote.lote} - Vto. {formatDateDisplay(lote.vencimiento)} - Stock {lote.stock}
+                            {lote.lote} - Stock {lote.stock}
                           </option>
                         ))}
                       </>
