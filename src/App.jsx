@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './components/AppLayout.jsx';
+import LandingPage from './pages/LandingPage.jsx';
 import LoginPage from './pages/usuarios/LoginPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import IngresosPage from './pages/stock/IngresosPage.jsx';
@@ -70,6 +71,7 @@ function App() {
       />
       <Router>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
 
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
@@ -116,7 +118,6 @@ function App() {
               <AdminRoute><UsuariosPage /></AdminRoute>
             } />
 
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>
       </Router>

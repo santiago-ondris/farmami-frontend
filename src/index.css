@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 @theme {
   --color-primary: #2D3748;
@@ -448,3 +448,4 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
