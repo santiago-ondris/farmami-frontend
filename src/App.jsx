@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -40,6 +41,8 @@ import PresupuestoFormPage from './pages/presupuestos/PresupuestoFormPage.jsx';
 import PresupuestoDetallePage from './pages/presupuestos/PresupuestoDetallePage.jsx';
 import ManualUsuarioPage from './pages/ManualUsuarioPage.jsx';
 
+const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
+
 function App() {
   return (
     <AuthProvider>
@@ -70,7 +73,7 @@ function App() {
         }}
       />
       <Router>
-        <Routes>
+        <SentryRoutes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
 
@@ -119,7 +122,7 @@ function App() {
             } />
 
           </Route>
-        </Routes>
+        </SentryRoutes>
       </Router>
     </AuthProvider>
   );
